@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     const { error: dbError } = await getSupabaseAdmin()
       .from('payments')
       .insert({
-        phone,
+        phone: phone || PhoneNumber,
         package_id: packageId,
         amount,
         status: 'pending',
