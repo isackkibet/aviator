@@ -13,6 +13,10 @@
 ↓ https://your-aviator.vercel.app
 ```
 
+## Live Preview
+See the latest deployed site for review:
+https://aviator-seven-omega.vercel.app/
+
 ## Test Local
 ```
 npm run dev
