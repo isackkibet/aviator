@@ -149,9 +149,13 @@ export default function Dashboard() {
 
 
 
-  // Real-time sync loop – updates 10× per second for smooth visuals
+  // Real-time sync – rAF for smooth multiplier, throttled updates for signals/wins
 
   useEffect(() => {
+    let lastRoundIndex = -1
+    let lastWinBucket = -1
+    let rafId: number
+
     const update = () => {
       const state = getCurrentRoundState()
       const multiplier = computeLiveMultiplier(state.elapsed, state.crashMs, state.crashMultiplier)
@@ -163,14 +167,24 @@ export default function Dashboard() {
         currentRoundIndex: state.currentRoundIndex,
         elapsed: state.elapsed
       })
-      setSignals(generateSignals(10, state.currentRoundIndex))
-      // Refresh recent wins every 5 seconds using a time bucket
-      setRecentWins(generateRecentWins(Math.floor(Date.now() / 5000), 14))
+
+      if (state.currentRoundIndex !== lastRoundIndex) {
+        lastRoundIndex = state.currentRoundIndex
+        setSignals(generateSignals(10, state.currentRoundIndex))
+      }
+
+      const winBucket = Math.floor(Date.now() / 5000)
+      if (winBucket !== lastWinBucket) {
+        lastWinBucket = winBucket
+        setRecentWins(generateRecentWins(winBucket, 14))
+      }
+
+      rafId = requestAnimationFrame(update)
     }
 
     update()
-    const interval = setInterval(update, 100)
-    return () => clearInterval(interval)
+    rafId = requestAnimationFrame(update)
+    return () => cancelAnimationFrame(rafId)
   }, [])
 
   const isMega = liveGame > 100

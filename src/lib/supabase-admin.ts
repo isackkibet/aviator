@@ -5,7 +5,13 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = process.env.SUPABASE_URL
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-export const supabaseAdmin = supabaseUrl && supabaseServiceRoleKey
+// Check if values are real (not placeholders)
+const isValidConfig = supabaseUrl && 
+  supabaseServiceRoleKey && 
+  !supabaseUrl.includes('your-project-ref') &&
+  !supabaseServiceRoleKey.includes('your-service-role-key')
+
+export const supabaseAdmin = isValidConfig
   ? createClient(supabaseUrl, supabaseServiceRoleKey)
   : null
 
