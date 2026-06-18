@@ -133,17 +133,39 @@ export default function Dashboard() {
     currentRoundIndex: 0,
     elapsed: 0
   })
-  const [accessGranted] = useState(false)
+  const [accessGranted, setAccessGranted] = useState(false)
+  const [accessPackage, setAccessPackage] = useState<string | null>(null)
+  const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null)
+  const [accessMessage, setAccessMessage] = useState('')
+  const [accessLoading, setAccessLoading] = useState(true)
 
-  const [accessMessage] = useState('')
-
-  // Check for active payment on load (for premium badge/status only)
+  // Check for active payment on load
   useEffect(() => {
     const storedPhone = localStorage.getItem('aviator_phone')
-    if (!storedPhone) return
+    if (!storedPhone) {
+      setAccessLoading(false)
+      setAccessMessage('Buy a package to view signals')
+      return
+    }
 
-    // Keep UI stable without triggering React state updates during initial mount.
-    // (Access verification is disabled in this build.)
+    fetch(`/api/verify-access?phone=${encodeURIComponent(storedPhone)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.hasAccess) {
+          setAccessGranted(true)
+          setAccessPackage(data.package_id)
+          setAccessExpiresAt(data.expires_at)
+          setAccessMessage(data.message)
+        } else {
+          setAccessGranted(false)
+          setAccessMessage(data.message || 'Buy a package to view signals')
+        }
+      })
+      .catch(() => {
+        setAccessGranted(false)
+        setAccessMessage('Could not verify access')
+      })
+      .finally(() => setAccessLoading(false))
   }, [])
 
 
@@ -200,18 +222,21 @@ export default function Dashboard() {
           <p className="text-2xl text-gray-400 font-semibold">Cash out before it crashes ➡️</p>
         </div>
 
-        {/* Premium status badge (optional) */}
-        {accessMessage && (
+        {/* Access status banner */}
+        {!accessLoading && (
           <div className="mb-8 text-center">
             <div className={`glass inline-flex items-center gap-4 px-8 py-4 rounded-full border-2 ${accessGranted ? 'border-[#22c55e]/30' : 'border-red-500/30'}`}>
               <span className="text-2xl">{accessGranted ? '✅' : '🔒'}</span>
               <span className={`text-lg font-bold ${accessGranted ? 'text-[#22c55e]' : 'text-red-400'}`}>{accessMessage}</span>
+              {accessExpiresAt && (
+                <span className="text-sm text-gray-400">expires {new Date(accessExpiresAt).toLocaleTimeString()}</span>
+              )}
             </div>
           </div>
         )}
 
-        {/* CTA to buy package */}
-        {!accessGranted && (
+        {/* CTA to buy package (shown when no access) */}
+        {!accessGranted && !accessLoading && (
           <div className="mb-8 text-center">
             <Link href="/packages">
               <div className="glass inline-flex items-center gap-4 px-8 py-4 rounded-full border-2 border-[#22c55e]/30 hover:border-[#22c55e] hover:scale-105 transition-all cursor-pointer">
@@ -265,6 +290,18 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <div>
             <h3 className="text-3xl font-black mb-8 text-[#22c55e] multiplier-glow">🔥 LIVE SIGNALS (95.2% Accurate)</h3>
+            {!accessGranted ? (
+              <div className="glass p-12 rounded-2xl text-center border-2 border-gray-700/50">
+                <div className="text-6xl mb-4">🔒</div>
+                <h4 className="text-2xl font-bold text-gray-300 mb-4">Signals Locked</h4>
+                <p className="text-gray-400 mb-6">Purchase a package to unlock live signals</p>
+                <Link href="/packages">
+                  <div className="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-2xl text-lg font-black shadow-2xl hover:from-red-500 hover:to-red-600 transition-all transform hover:scale-105 inline-block border border-red-500/30">
+                    Buy Package — from KSH 100
+                  </div>
+                </Link>
+              </div>
+            ) : (
             <div className="space-y-4">
               {signals.map((signal, index) => {
                 const sigMega = parseFloat(signal.multiplier) > 100
@@ -287,6 +324,7 @@ export default function Dashboard() {
                 )
               })}
             </div>
+            )}
           </div>
           <div>
             <h3 className="text-3xl font-black mb-8 text-red-400 multiplier-glow">🏆 Recent Player Wins</h3>

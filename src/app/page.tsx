@@ -43,10 +43,10 @@ export default function Home() {
               <span className="text-4xl font-black block text-red-400">KSH 100</span>
               <span className="opacity-70 text-gray-400">Min Package</span>
             </div>
-            <div className="glass p-6 rounded-2xl border border-[#22c55e]/20">
+            <Link href="/admin/login" className="glass p-6 rounded-2xl border border-[#22c55e]/20 block hover:scale-105 transition-all cursor-pointer">
               <span className="text-4xl font-black block text-[#22c55e]">24/7</span>
               <span className="opacity-70 text-gray-400">Live Support</span>
-            </div>
+            </Link>
             <div className="glass p-6 rounded-2xl border border-red-500/20">
               <span className="text-4xl font-black block text-red-400">15s AVG</span>
               <span className="opacity-70 text-gray-400">Signal Delay</span>

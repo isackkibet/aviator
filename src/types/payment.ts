@@ -18,7 +18,7 @@ export interface Payment {
 export interface CreatePaymentRequest {
   phone?: string
   PhoneNumber?: string
-  Amount?: number
+  amount?: number
   packageId?: string
   Provider?: string
 }
