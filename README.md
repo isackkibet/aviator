@@ -35,5 +35,5 @@ src/app/
     └── webhook/route.ts (Callback)
 ```
 
-**Aviator Signals – Ready to earn!**
+**Aviator Signals – Ready to earn!** *(tweaked on isack1 branch)*
 
