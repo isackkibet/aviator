@@ -1,17 +1,23 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { db } from '@/lib/db'
 
 async function getAdminId(): Promise<string | null> {
   const token = (await cookies()).get('admin_token')?.value
-  if (!token || !supabaseAdmin) return null
-  const { data } = await supabaseAdmin
-    .from('sessions')
-    .select('admin_id')
-    .eq('token', token)
-    .gte('expires_at', new Date().toISOString())
-    .single()
-  return data?.admin_id || null
+  if (!token) return null
+
+  try {
+    const rows = await db()`
+      select admin_id
+      from sessions
+      where token = ${token}
+        and expires_at >= now()
+      limit 1
+    `
+    return (rows[0]?.admin_id as string) || null
+  } catch {
+    return null
+  }
 }
 
 export async function GET(req: Request) {
@@ -25,29 +31,45 @@ export async function GET(req: Request) {
   const phone = url.searchParams.get('phone')
   const page = parseInt(url.searchParams.get('page') || '1')
   const limit = 50
-  const offset = (page - 1) * limit
+  const offset = Math.max(0, (page - 1) * limit)
 
-  let query = supabaseAdmin!
-    .from('payments')
-    .select('*', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1)
+  const cond: string[] = []
+  const params: (string | number)[] = []
 
   if (status && status !== 'all') {
-    query = query.eq('status', status)
+    params.push(status)
+    cond.push(`status = $${params.length}`)
   }
-
   if (phone) {
-    query = query.ilike('phone', `%${phone}%`)
+    params.push(`%${phone}%`)
+    cond.push(`phone ILIKE $${params.length}`)
   }
 
-  const { data, count, error } = await query
+  const where = cond.length ? `where ${cond.join(' and ')}` : ''
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  try {
+    const payments = await db().query(
+      `select * from payments ${where} order by created_at desc limit $${params.length + 1} offset $${params.length + 2}`,
+      [...params, limit, offset]
+    )
+
+    let total = 0
+    try {
+      const totalRows = await db().query(`select count(*)::int as c from payments ${where}`, params)
+      total = (totalRows[0]?.c as number) || 0
+    } catch {
+      total = 0
+    }
+
+    return NextResponse.json({
+      payments,
+      total,
+      page,
+      limit,
+    })
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 })
   }
-
-  return NextResponse.json({ payments: data, total: count, page, limit })
 }
 
 export async function PATCH(req: Request) {
@@ -66,14 +88,14 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
   }
 
-  const { error } = await supabaseAdmin!
-    .from('payments')
-    .update({ status })
-    .eq('id', id)
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  try {
+    await db()`
+      update payments
+      set status = ${status}
+      where id = ${id}
+    `
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 })
   }
-
-  return NextResponse.json({ success: true })
 }

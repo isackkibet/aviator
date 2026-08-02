@@ -1,4 +1,5 @@
--- Run this in your Supabase SQL editor
+-- Run this in your Neon SQL editor (Neon console -> SQL Editor)
+-- or: psql "$DATABASE_URL" -f src/lib/neon-schema.sql
 
 create table if not exists payments (
   id uuid primary key default gen_random_uuid(),

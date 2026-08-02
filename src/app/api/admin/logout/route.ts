@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { db } from '@/lib/db'
 
 export async function POST() {
   const token = (await cookies()).get('admin_token')?.value
 
-  if (token && supabaseAdmin) {
-    await supabaseAdmin.from('sessions').delete().eq('token', token)
+  if (token) {
+    try {
+      await db()`
+        delete from sessions
+        where token = ${token}
+      `
+    } catch {
+      // ignore deletion errors on logout
+    }
   }
 
   const response = NextResponse.json({ success: true })

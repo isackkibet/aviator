@@ -35,8 +35,8 @@ body {
 }
 
 @keyframes multiplier-glow {
-  0%, 100% { text-shadow: 0 0 20px hsl(142 100% 50% / 0.6); }
-  50% { text-shadow: 0 0 40px hsl(142 100% 50% / 1); }
+  0%, 100% { text-shadow: 0 0 20px hsl(142 100% 50% / 0.6), 0 0 60px hsl(142 100% 50% / 0.2); }
+  50% { text-shadow: 0 0 40px hsl(142 100% 50% / 1), 0 0 80px hsl(142 100% 50% / 0.4); }
 }
 
 @keyframes pulse {
@@ -94,9 +94,63 @@ body {
 
 .aviator-grid-bg {
   background-image:
-    linear-gradient(rgba(34, 197, 94, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 197, 94, 0.06) 1px, transparent 1px);
-  background-size: 50px 50px;
+    linear-gradient(rgba(34, 197, 94, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 197, 94, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Graph curve draw animation */
+@keyframes graph-draw {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.graph-line {
+  stroke-dasharray: 1000;
+  animation: graph-draw 1.2s ease-out forwards;
+}
+
+/* Crash flash overlay */
+@keyframes crash-flash {
+  0%   { opacity: 0.6; }
+  50%  { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+
+.crash-flash {
+  animation: crash-flash 0.6s ease-out forwards;
+}
+
+/* Win row highlight sweep */
+@keyframes win-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.win-sweep {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(34, 197, 94, 0.12) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: win-sweep 2.5s ease-in-out infinite;
+}
+
+/* Scrollbar styling for win list */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: rgba(34, 197, 94, 0.2);
+  border-radius: 4px;
+}
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: rgba(34, 197, 94, 0.4);
 }
 
 

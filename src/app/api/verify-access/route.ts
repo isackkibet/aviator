@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { db } from '@/lib/db'
 
 const PACKAGE_DURATIONS: Record<string, number> = {
   basic: 30,
@@ -15,44 +15,43 @@ export async function GET(req: Request) {
     return NextResponse.json({ hasAccess: false, message: 'phone is required' }, { status: 400 })
   }
 
-  if (!supabaseAdmin) {
-    return NextResponse.json({ hasAccess: false, message: 'Supabase admin not configured' }, { status: 500 })
-  }
+  try {
+    const rows = await db()`
+      select package_id, amount, created_at
+      from payments
+      where phone = ${phone}
+        and status = 'paid'
+      order by created_at desc
+      limit 1
+    `
 
-  const { data, error } = await supabaseAdmin
-    .from('payments')
-    .select('package_id, amount, created_at')
-    .eq('phone', phone)
-    .eq('status', 'paid')
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single()
-
-  if (error) {
-    if (error.code === 'PGRST116') {
+    if (rows.length === 0) {
       return NextResponse.json({ hasAccess: false, message: 'No active payment found' })
     }
-    return NextResponse.json({ error: error.message }, { status: 500 })
+
+    const data = rows[0] as { package_id: string; amount: string | number; created_at: string }
+
+    const durationMin = PACKAGE_DURATIONS[data.package_id]
+    if (!durationMin) {
+      return NextResponse.json({ hasAccess: false, message: 'Unknown package' })
+    }
+
+    const createdAt = new Date(data.created_at).getTime()
+    const expiresAt = createdAt + durationMin * 60 * 1000
+    const now = Date.now()
+
+    if (now > expiresAt) {
+      return NextResponse.json({ hasAccess: false, message: 'Access expired' })
+    }
+
+    return NextResponse.json({
+      hasAccess: true,
+      package_id: data.package_id,
+      amount: data.amount,
+      expires_at: new Date(expiresAt).toISOString(),
+      message: `Active ${data.package_id} access`,
+    })
+  } catch (error) {
+    return NextResponse.json({ error: String(error) }, { status: 500 })
   }
-
-  const durationMin = PACKAGE_DURATIONS[data.package_id]
-  if (!durationMin) {
-    return NextResponse.json({ hasAccess: false, message: 'Unknown package' })
-  }
-
-  const createdAt = new Date(data.created_at).getTime()
-  const expiresAt = createdAt + durationMin * 60 * 1000
-  const now = Date.now()
-
-  if (now > expiresAt) {
-    return NextResponse.json({ hasAccess: false, message: 'Access expired' })
-  }
-
-  return NextResponse.json({
-    hasAccess: true,
-    package_id: data.package_id,
-    amount: data.amount,
-    expires_at: new Date(expiresAt).toISOString(),
-    message: `Active ${data.package_id} access`,
-  })
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { supabaseAdmin } from '@/lib/supabase-admin'
+import { db } from '@/lib/db'
 import type { CreatePaymentRequest, StkPushResponse } from '@/types/payment'
 
 export async function POST(req: Request) {
@@ -33,28 +33,13 @@ export async function POST(req: Request) {
     const checkoutId = `local_${Date.now()}_${Math.random().toString(16).slice(2)}`
     console.log('Generated checkoutId:', checkoutId)
 
-    // Skip Supabase insert if not configured (for testing)
-    console.log('supabaseAdmin exists:', !!supabaseAdmin)
-    if (supabaseAdmin) {
-      console.log('Attempting to insert into Supabase')
-      const { error: insertError } = await supabaseAdmin
-        .from('payments')
-        .insert({
-          phone,
-          package_id: packageId,
-          amount,
-          status: 'pending',
-          checkout_id: checkoutId,
-        })
-
-      if (insertError) {
-        console.log('Supabase insert error:', insertError)
-        return NextResponse.json({ error: insertError.message }, { status: 500 })
-      }
-      console.log('Supabase insert successful')
-    } else {
-      console.log('Skipping Supabase insert (not configured)')
-    }
+    // Insert into Neon Postgres
+    const result = await db()`
+      insert into payments (phone, package_id, amount, status, checkout_id)
+      values (${phone}, ${packageId}, ${amount}, 'pending', ${checkoutId})
+      returning id
+    `
+    console.log('Insert result:', result)
 
     // PayHero integration (placeholder) — enabled only if env vars exist
     const payheroEnabled = Boolean(process.env.PAYHERO_API_KEY)
@@ -83,4 +68,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: String(error) }, { status: 500 })
   }
 }
-
