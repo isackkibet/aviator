@@ -28,11 +28,7 @@ body {
   font-family: var(--font-geist-sans), sans-serif;
 }
 
-/* Aviator real game animations */
-@keyframes plane-fly {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-50px) rotate(5deg); }
-}
+/* ─── Core Animations ─────────────────────────────────────── */
 
 @keyframes multiplier-glow {
   0%, 100% { text-shadow: 0 0 20px hsl(142 100% 50% / 0.6), 0 0 60px hsl(142 100% 50% / 0.2); }
@@ -50,10 +46,17 @@ body {
   100% { opacity: 0.3; }
 }
 
+@keyframes plane-fly {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-50px) rotate(5deg); }
+}
+
 .multiplier-glow { animation: multiplier-glow 1.5s ease-in-out infinite; }
 .plane { animation: plane-fly 3s ease-in-out infinite; }
 .pulse { animation: pulse 1.5s ease-in-out infinite; }
 .grid-line { animation: grid-line 3s ease-in-out infinite; }
+
+/* ─── Glass Morphism ──────────────────────────────────────── */
 
 .glass {
   -webkit-backdrop-filter: blur(20px);
@@ -62,35 +65,263 @@ body {
   border: 1px solid rgba(34, 197, 94, 0.15);
 }
 
+.glass-strong {
+  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(30px);
+  background: rgba(10, 14, 23, 0.85);
+  border: 1px solid rgba(34, 197, 94, 0.12);
+}
+
+/* ─── Card Hover Glow ─────────────────────────────────────── */
+
+.card-glow {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.card-glow::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(34,197,94,0.2), transparent, rgba(239,68,68,0.15));
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+  pointer-events: none;
+}
+.card-glow:hover::before {
+  opacity: 1;
+}
+.card-glow:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.12), 0 0 0 1px rgba(34, 197, 94, 0.15);
+}
+.card-glow > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Red variant */
+.card-glow-red::before {
+  background: linear-gradient(135deg, rgba(239,68,68,0.2), transparent, rgba(239,68,68,0.1));
+}
+.card-glow-red:hover {
+  box-shadow: 0 8px 32px rgba(239, 68, 68, 0.12), 0 0 0 1px rgba(239, 68, 68, 0.15);
+}
+
+/* Yellow variant */
+.card-glow-yellow::before {
+  background: linear-gradient(135deg, rgba(250,204,21,0.2), transparent, rgba(250,204,21,0.1));
+}
+.card-glow-yellow:hover {
+  box-shadow: 0 8px 32px rgba(250, 204, 21, 0.12), 0 0 0 1px rgba(250, 204, 21, 0.15);
+}
+
+/* ─── Shimmer / Shine Effect ──────────────────────────────── */
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(34, 197, 94, 0.06) 40%,
+    rgba(34, 197, 94, 0.12) 50%,
+    rgba(34, 197, 94, 0.06) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+.shimmer-red {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(239, 68, 68, 0.06) 40%,
+    rgba(239, 68, 68, 0.12) 50%,
+    rgba(239, 68, 68, 0.06) 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* ─── Floating Animation ──────────────────────────────────── */
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-12px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+.float { animation: float 3s ease-in-out infinite; }
+.float-slow { animation: float-slow 5s ease-in-out infinite; }
+.float-delay-1 { animation-delay: 0.5s; }
+.float-delay-2 { animation-delay: 1s; }
+.float-delay-3 { animation-delay: 1.5s; }
+
+/* ─── Gradient Shift (animated BG) ────────────────────────── */
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-shift {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}
+
+/* ─── Stagger Fade-in ─────────────────────────────────────── */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.fade-up-1 { animation-delay: 0.1s; }
+.fade-up-2 { animation-delay: 0.2s; }
+.fade-up-3 { animation-delay: 0.3s; }
+.fade-up-4 { animation-delay: 0.4s; }
+.fade-up-5 { animation-delay: 0.5s; }
+.fade-up-6 { animation-delay: 0.6s; }
+
+/* ─── Pulse Ring (live indicator) ─────────────────────────── */
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.7; }
+  100% { transform: scale(2.2); opacity: 0; }
+}
+
+.pulse-ring {
+  position: relative;
+}
+.pulse-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  animation: pulse-ring 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ─── Gradient Text ───────────────────────────────────────── */
+
+.gradient-text-red {
+  background: linear-gradient(135deg, #ef4444, #f97316, #ef4444);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease infinite;
+}
+
+.gradient-text-green {
+  background: linear-gradient(135deg, #22c55e, #10b981, #22c55e);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* ─── Button Glow ─────────────────────────────────────────── */
+
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+.btn-glow:hover::after {
+  transform: translateX(100%);
+}
+.btn-glow:hover {
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+  transform: scale(1.05);
+}
+
+.btn-glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+}
+.btn-glow-green:hover {
+  box-shadow: 0 0 40px rgba(34, 197, 94, 0.35);
+}
+
+/* ─── Platform Badge Hover ────────────────────────────────── */
+
+.platform-badge {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+.platform-badge:hover {
+  transform: translateY(-4px) scale(1.08);
+}
+.platform-badge::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  border-radius: 1px;
+  transition: width 0.3s ease;
+}
+.platform-badge:hover::after {
+  width: 60%;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+
+.overflow-y-auto::-webkit-scrollbar { width: 4px; }
+.overflow-y-auto::-webkit-scrollbar-track { background: transparent; }
+.overflow-y-auto::-webkit-scrollbar-thumb { background: rgba(34, 197, 94, 0.2); border-radius: 4px; }
+.overflow-y-auto::-webkit-scrollbar-thumb:hover { background: rgba(34, 197, 94, 0.4); }
+
+/* ─── Existing kept animations ────────────────────────────── */
+
 @keyframes big-win-burst {
   0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.4); }
   50% { box-shadow: 0 0 30px 10px rgba(250, 204, 21, 0.2); }
   100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); }
 }
-
-.big-win-burst {
-  animation: big-win-burst 1.5s ease-in-out infinite;
-}
+.big-win-burst { animation: big-win-burst 1.5s ease-in-out infinite; }
 
 @keyframes mega-multiplier-glow {
   0% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.5); text-shadow: 0 0 0 rgba(250, 204, 21, 0); }
   50% { box-shadow: 0 0 50px 15px rgba(250, 204, 21, 0.35); text-shadow: 0 0 30px rgba(250, 204, 21, 0.6); }
   100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0); text-shadow: 0 0 0 rgba(250, 204, 21, 0); }
 }
+.mega-multiplier-glow { animation: mega-multiplier-glow 0.8s ease-in-out infinite; }
 
-.mega-multiplier-glow {
-  animation: mega-multiplier-glow 0.8s ease-in-out infinite;
-}
-
-/* Toast slide-in animation */
 @keyframes slide-in {
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
-
-.animate-slide-in {
-  animation: slide-in 0.4s ease-out forwards;
-}
+.animate-slide-in { animation: slide-in 0.4s ease-out forwards; }
 
 .aviator-grid-bg {
   background-image:
@@ -99,58 +330,97 @@ body {
   background-size: 40px 40px;
 }
 
-/* Graph curve draw animation */
 @keyframes graph-draw {
   from { stroke-dashoffset: 1000; }
   to   { stroke-dashoffset: 0; }
 }
+.graph-line { stroke-dasharray: 1000; animation: graph-draw 1.2s ease-out forwards; }
 
-.graph-line {
-  stroke-dasharray: 1000;
-  animation: graph-draw 1.2s ease-out forwards;
-}
-
-/* Crash flash overlay */
 @keyframes crash-flash {
   0%   { opacity: 0.6; }
   50%  { opacity: 0.15; }
   100% { opacity: 0; }
 }
+.crash-flash { animation: crash-flash 0.6s ease-out forwards; }
 
-.crash-flash {
-  animation: crash-flash 0.6s ease-out forwards;
-}
-
-/* Win row highlight sweep */
 @keyframes win-sweep {
   0%   { background-position: -200% center; }
   100% { background-position: 200% center; }
 }
-
 .win-sweep {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(34, 197, 94, 0.12) 50%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg, transparent 0%, rgba(34, 197, 94, 0.12) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: win-sweep 2.5s ease-in-out infinite;
 }
 
-/* Scrollbar styling for win list */
-.overflow-y-auto::-webkit-scrollbar {
-  width: 4px;
+/* ─── Hero Gradient Mesh BG ───────────────────────────────── */
+
+@keyframes mesh-float-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -40px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.95); }
 }
-.overflow-y-auto::-webkit-scrollbar-track {
-  background: transparent;
+@keyframes mesh-float-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(-40px, 20px) scale(0.9); }
+  66% { transform: translate(20px, -30px) scale(1.1); }
 }
-.overflow-y-auto::-webkit-scrollbar-thumb {
-  background: rgba(34, 197, 94, 0.2);
-  border-radius: 4px;
-}
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-  background: rgba(34, 197, 94, 0.4);
+@keyframes mesh-float-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(25px, 25px) scale(1.05); }
 }
 
+.mesh-orb-1 {
+  animation: mesh-float-1 12s ease-in-out infinite;
+}
+.mesh-orb-2 {
+  animation: mesh-float-2 15s ease-in-out infinite;
+}
+.mesh-orb-3 {
+  animation: mesh-float-3 18s ease-in-out infinite;
+}
 
+/* ─── Signal row hover highlight ──────────────────────────── */
+
+@keyframes signal-flash {
+  0% { background-color: rgba(34, 197, 94, 0.08); }
+  100% { background-color: transparent; }
+}
+
+.signal-row {
+  transition: background-color 0.3s ease;
+}
+.signal-row:hover {
+  background-color: rgba(34, 197, 94, 0.05);
+}
+
+/* ─── Nav link underline grow ─────────────────────────────── */
+
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  border-radius: 1px;
+  background: linear-gradient(90deg, #22c55e, #10b981);
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+.nav-link:hover::after {
+  width: 80%;
+}
+.nav-link:hover {
+  color: #22c55e;
+}
+
+/* ─── Divider glow ────────────────────────────────────────── */
+
+.divider-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.3), transparent);
+}

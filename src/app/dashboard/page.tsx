@@ -415,7 +415,7 @@ export default function Dashboard() {
       <div className="max-w-7xl mx-auto px-4 py-10">
 
         {/* ── Header ── */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="fade-up fade-up-1 flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-black text-white tracking-tight">
               <span className="text-[#22c55e]">AVIATOR</span> SIGNALS
@@ -423,12 +423,12 @@ export default function Dashboard() {
             <p className="text-gray-400 text-sm mt-1">Real-time predictions • 95.2% accuracy</p>
           </div>
           <div className="flex items-center gap-3">
-            <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold ${signalsRunning ? 'border-yellow-400/40 text-yellow-400 bg-yellow-400/10' : 'border-red-500/40 text-red-400 bg-red-500/10'}`}>
-              <span className="w-2 h-2 rounded-full inline-block" style={{ background: signalsRunning ? '#facc15' : '#ef4444' }} />
+            <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold transition-all duration-300 ${signalsRunning ? 'border-yellow-400/40 text-yellow-400 bg-yellow-400/10' : 'border-red-500/40 text-red-400 bg-red-500/10'}`}>
+              <span className="w-2 h-2 rounded-full inline-block animate-pulse" style={{ background: signalsRunning ? '#facc15' : '#ef4444' }} />
               {signalsRunning ? `UP TO ${maxMultiplier}x` : 'SIGNALS PAUSED'}
             </div>
             {!accessLoading && (
-              <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold ${accessGranted ? 'border-[#22c55e]/40 text-[#22c55e] bg-[#22c55e]/10' : 'border-red-500/40 text-red-400 bg-red-500/10'}`}>
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-bold transition-all duration-300 ${accessGranted ? 'border-[#22c55e]/40 text-[#22c55e] bg-[#22c55e]/10' : 'border-red-500/40 text-red-400 bg-red-500/10'}`}>
                 <span className="w-2 h-2 rounded-full animate-pulse inline-block" style={{ background: accessGranted ? '#22c55e' : '#ef4444' }} />
                 {accessGranted ? `VIP ACTIVE${accessExpiresAt ? ' · expires ' + new Date(accessExpiresAt).toLocaleTimeString() : ''}` : 'NO ACCESS'}
               </div>
@@ -454,7 +454,7 @@ export default function Dashboard() {
           <div className="xl:col-span-2 space-y-6">
 
             {/* Graph card */}
-            <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden ${borderColor}`}>
+            <div className={`fade-up fade-up-2 rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${borderColor}`}>
               {/* Top bar */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
                 <div className="flex items-center gap-2">
@@ -497,13 +497,13 @@ export default function Dashboard() {
             </div>
 
             {/* ── Stat cards ── */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="fade-up fade-up-3 grid grid-cols-3 gap-4">
               {[
-                { label: 'Win Rate', value: '95.2%', icon: 'W', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20' },
-                { label: 'Signals Today', value: '247', icon: 'S', color: 'text-yellow-400', border: 'border-yellow-400/20' },
-                { label: 'Total Profit', value: '12.7M', icon: 'P', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20' },
+                { label: 'Win Rate', value: '95.2%', icon: 'W', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20', glow: 'card-glow' },
+                { label: 'Signals Today', value: '247', icon: 'S', color: 'text-yellow-400', border: 'border-yellow-400/20', glow: 'card-glow card-glow-yellow' },
+                { label: 'Total Profit', value: '12.7M', icon: 'P', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20', glow: 'card-glow' },
               ].map((s) => (
-                <div key={s.label} className={`bg-[#0d1320] rounded-xl border ${s.border} p-4 text-center`}>
+                <div key={s.label} className={`bg-[#0d1320] rounded-xl border ${s.border} p-4 text-center ${s.glow} shimmer`}>
                   <div className="text-sm font-black text-gray-500 mb-1">{s.icon}</div>
                   <div className={`text-2xl font-black ${s.color}`}>{s.value}</div>
                   <div className="text-xs text-gray-500 mt-0.5 font-medium uppercase tracking-wide">{s.label}</div>
@@ -512,7 +512,7 @@ export default function Dashboard() {
             </div>
 
             {/* ── Signals list ── */}
-            <div className="bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
+            <div className="fade-up fade-up-4 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
                 <h3 className="font-black text-sm text-white uppercase tracking-widest">Live Signals</h3>
                 <span className="text-xs text-[#22c55e] font-bold">95.2% ACCURATE</span>
@@ -544,7 +544,7 @@ export default function Dashboard() {
                     const sigMega = val > 100
                     const win = signal.status === 'live'
                     return (
-                      <div key={i} className={`flex items-center justify-between px-5 py-3 hover:bg-white/[0.02] transition-colors`}>
+                      <div key={i} className={`signal-row flex items-center justify-between px-5 py-3 transition-all duration-300`}>
                         <div className="flex items-center gap-3">
                           <span className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black ${win ? (sigMega ? 'bg-yellow-400/20 text-yellow-400' : 'bg-[#22c55e]/20 text-[#22c55e]') : 'bg-red-500/20 text-red-400'}`}>
                             {win ? '✓' : '✗'}
@@ -572,31 +572,34 @@ export default function Dashboard() {
             {/* CTA if no access */}
             {!accessGranted && !accessLoading && (
               <Link href="/packages">
-                <div className="bg-gradient-to-br from-red-700 to-red-900 border border-red-500/40 rounded-2xl p-5 text-center hover:scale-[1.02] transition-all cursor-pointer">
+                <div className="fade-up fade-up-5 card-glow card-glow-red bg-gradient-to-br from-red-700 to-red-900 border border-red-500/40 rounded-2xl p-5 text-center cursor-pointer shimmer-red">
                   <div className="w-12 h-12 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
                     <svg className="w-7 h-7 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
                   </div>
                   <div className="text-white font-black text-lg mb-1">Get VIP Access</div>
                   <div className="text-red-300 text-sm">Unlock live signals + SMS alerts</div>
                   <div className="mt-3 bg-white/10 rounded-xl py-2 px-4 text-white font-black text-sm">
-                    From KSH 100 →
+                    From KSH 100
                   </div>
                 </div>
               </Link>
             )}
 
             {/* Recent wins card */}
-            <div className="bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
+            <div className="fade-up fade-up-6 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
                 <h3 className="font-black text-sm text-white uppercase tracking-widest">Recent Wins</h3>
-                <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse inline-block" />
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse inline-block pulse-ring" />
+                  <span className="text-xs text-[#22c55e] font-bold">LIVE</span>
+                </div>
               </div>
               <div className="divide-y divide-white/5 max-h-[560px] overflow-y-auto scroll-smooth">
                 {recentWins.map((win, i) => {
                   const amt = parseInt(win.amount.replace(/,/g, ''))
                   const big = amt >= 100000
                   return (
-                    <div key={i} className={`flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors ${big ? 'bg-yellow-400/5' : ''}`}>
+                    <div key={i} className={`flex items-center justify-between px-4 py-3 signal-row transition-all duration-300 ${big ? 'bg-yellow-400/5' : ''}`}>
                       <div className="flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center text-base font-black shrink-0 ${big ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-black' : 'bg-gradient-to-br from-[#22c55e] to-green-700 text-black'}`}>
                           {win.emoji}
@@ -628,7 +631,7 @@ export default function Dashboard() {
                   { name: 'ODIBET', color: 'text-red-400', border: 'border-red-500/20' },
                   { name: 'MELBET', color: 'text-yellow-400', border: 'border-yellow-400/20' },
                 ].map((p) => (
-                  <div key={p.name} className={`flex items-center justify-center bg-white/5 rounded-xl px-3 py-2 hover:bg-white/10 transition-colors cursor-pointer border ${p.border}`}>
+                  <div key={p.name} className={`platform-badge flex items-center justify-center bg-white/5 rounded-xl px-3 py-2 cursor-pointer border ${p.border}`}>
                     <span className={`text-xs font-black ${p.color}`}>{p.name}</span>
                   </div>
                 ))}

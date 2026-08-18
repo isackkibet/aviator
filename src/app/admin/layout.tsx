@@ -5,8 +5,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const navItems = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: '■' },
-  { href: '/admin/payments', label: 'Payments', icon: '▣' },
+  { href: '/admin/dashboard', label: 'Dashboard', iconPath: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z' },
+  { href: '/admin/payments', label: 'Payments', iconPath: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -41,7 +41,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center">
-        <div className="text-2xl text-gray-400">Loading...</div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-2 border-[#22c55e] border-t-transparent rounded-full animate-spin" />
+          <div className="text-sm text-gray-400 font-bold">Loading...</div>
+        </div>
       </div>
     )
   }
@@ -56,44 +59,64 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-[#0a0e17]">
       <div className="flex">
-        <aside className="w-64 min-h-screen glass border-r border-gray-700/50 p-6 hidden lg:block">
+        <aside className="w-64 min-h-screen glass-strong border-r border-[#22c55e]/10 p-6 hidden lg:block">
           <div className="mb-8">
             <Link href="/admin/dashboard">
-              <div className="text-2xl font-black text-[#22c55e]">Admin</div>
+              <div className="flex items-center gap-3 group">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#22c55e] to-green-700 flex items-center justify-center text-black font-black text-sm transition-all duration-300 group-hover:shadow-lg group-hover:shadow-[#22c55e]/30">
+                  A
+                </div>
+                <div>
+                  <div className="text-lg font-black text-white">Admin</div>
+                  <div className="text-xs text-gray-500">Control Panel</div>
+                </div>
+              </div>
             </Link>
           </div>
 
+          <div className="divider-glow mb-6" />
+
           <nav className="space-y-2">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href}>
-                <div
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${
-                    pathname === item.href
-                      ? 'bg-[#22c55e]/20 text-[#22c55e] border border-[#22c55e]/30'
-                      : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
-                  }`}
-                >
-                  <span>{item.icon}</span>
-                  <span>{item.label}</span>
-                </div>
-              </Link>
-            ))}
+            {navItems.map((item) => {
+              const active = pathname === item.href
+              return (
+                <Link key={item.href} href={item.href}>
+                  <div
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-300 ${
+                      active
+                        ? 'bg-[#22c55e]/15 text-[#22c55e] border border-[#22c55e]/25 shadow-lg shadow-[#22c55e]/5'
+                        : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
+                    }`}
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.iconPath} />
+                    </svg>
+                    <span>{item.label}</span>
+                    {active && (
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+                    )}
+                  </div>
+                </Link>
+              )
+            })}
           </nav>
 
           <div className="mt-auto pt-8">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/25 transition-all duration-300"
             >
-              <span className="w-2 h-2 rounded-full inline-block bg-red-400" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
               <span>Logout</span>
             </button>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-6">
             <Link href="/dashboard">
               <div className="text-sm text-gray-500 hover:text-gray-300 transition-colors">
-                ← Back to site
+                Back to site
               </div>
             </Link>
           </div>
@@ -105,19 +128,27 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Mobile nav */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 glass border-t border-gray-700/50 p-4">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 glass-strong border-t border-[#22c55e]/10 p-4 z-50">
         <div className="flex justify-around">
-          {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <div className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl font-bold transition-all ${
-                pathname === item.href ? 'text-[#22c55e]' : 'text-gray-400'
-              }`}>
-                <span className="text-xl">{item.icon}</span>
-                <span className="text-xs">{item.label}</span>
-              </div>
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const active = pathname === item.href
+            return (
+              <Link key={item.href} href={item.href}>
+                <div className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl font-bold transition-all duration-300 ${
+                  active ? 'text-[#22c55e]' : 'text-gray-400'
+                }`}>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.iconPath} />
+                  </svg>
+                  <span className="text-xs">{item.label}</span>
+                </div>
+              </Link>
+            )
+          })}
           <button onClick={handleLogout} className="flex flex-col items-center gap-1 px-4 py-2 text-red-400">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
             <span className="text-xs">Logout</span>
           </button>
         </div>

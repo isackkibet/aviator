@@ -38,19 +38,23 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="glass rounded-3xl p-10 border-2 border-gray-700/50">
+    <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center px-4 relative overflow-hidden">
+      {/* Background orbs */}
+      <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#22c55e]/5 blur-[120px] mesh-orb-1" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] rounded-full bg-red-500/5 blur-[120px] mesh-orb-2" />
+
+      <div className="w-full max-w-md relative z-10">
+        <div className="fade-up fade-up-1 glass-strong rounded-3xl p-10 border border-[#22c55e]/15">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-[#22c55e]/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+            <div className="fade-up fade-up-2 w-16 h-16 bg-gradient-to-br from-[#22c55e] to-green-700 rounded-2xl flex items-center justify-center mx-auto mb-4 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-[#22c55e]/30">
+              <svg className="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
             </div>
-            <h1 className="text-3xl font-black text-white">Super Admin</h1>
-            <p className="text-gray-400 mt-2">Sign in to manage the platform</p>
+            <h1 className="fade-up fade-up-2 text-3xl font-black text-white">Super Admin</h1>
+            <p className="fade-up fade-up-3 text-gray-400 mt-2">Sign in to manage the platform</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
+            <div className="fade-up fade-up-3">
               <label className="block text-sm font-bold text-gray-300 mb-2">Email</label>
               <input
                 type="email"
@@ -58,11 +62,11 @@ export default function AdminLogin() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="isackkibet97@gmail.com"
                 required
-                className="w-full bg-black/30 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none focus:border-[#22c55e]"
+                className="w-full bg-black/30 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none focus:border-[#22c55e] focus:shadow-lg focus:shadow-[#22c55e]/10 transition-all duration-300"
               />
             </div>
 
-            <div>
+            <div className="fade-up fade-up-4">
               <label className="block text-sm font-bold text-gray-300 mb-2">Password</label>
               <input
                 type="password"
@@ -70,12 +74,12 @@ export default function AdminLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                className="w-full bg-black/30 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none focus:border-[#22c55e]"
+                className="w-full bg-black/30 border border-gray-700/50 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 outline-none focus:border-[#22c55e] focus:shadow-lg focus:shadow-[#22c55e]/10 transition-all duration-300"
               />
             </div>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm font-bold">
+              <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 text-red-400 text-sm font-bold animate-slide-in">
                 {error}
               </div>
             )}
@@ -83,9 +87,16 @@ export default function AdminLogin() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#22c55e] to-green-600 text-white py-4 rounded-xl text-lg font-black shadow-2xl hover:from-[#22c55e]/90 hover:to-green-600/90 transition-all disabled:opacity-50"
+              className="fade-up fade-up-5 w-full btn-glow btn-glow-green bg-gradient-to-r from-[#22c55e] to-green-600 text-white py-4 rounded-xl text-lg font-black shadow-2xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Signing in...
+                </span>
+              ) : (
+                'Sign In'
+              )}
             </button>
           </form>
         </div>
