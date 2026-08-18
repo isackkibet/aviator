@@ -586,133 +586,135 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* ── Main Area: Bet Panels + Graph ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 mb-4">
-
-          {/* ── Bet Panels (1 col, left) ── */}
-          <div className="space-y-3">
-            <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
-            <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
+        {/* ── Live Chart (full width, top) ── */}
+        <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 mb-4 ${
+          crashed ? 'border-red-500/40' : isMega ? 'border-yellow-400/40' : 'border-[#8b5cf6]/20'
+        }`}>
+          {/* Graph header */}
+          <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
+            <div className="flex items-center gap-3">
+              <span className={`w-2 h-2 rounded-full ${crashed ? 'bg-red-400' : 'bg-[#f97316] animate-pulse'}`} />
+              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{crashed ? 'CRASHED' : 'LIVE'}</span>
+            </div>
+            <div className="flex items-center gap-3">
+              {isMega && !crashed && <span className="text-[10px] font-black bg-yellow-400 text-black px-2 py-0.5 rounded-full animate-bounce">MEGA</span>}
+              <span className="text-xs text-gray-500 font-mono">Round #{currentRoundIndex}</span>
+            </div>
           </div>
 
-          {/* ── Graph (3 cols, right) ── */}
-          <div className="xl:col-span-3">
-            <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${
-              crashed ? 'border-red-500/40' : isMega ? 'border-yellow-400/40' : 'border-[#8b5cf6]/20'
-            }`}>
-              {/* Graph header */}
-              <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
-                <div className="flex items-center gap-3">
-                  <span className={`w-2 h-2 rounded-full ${crashed ? 'bg-red-400' : 'bg-[#f97316] animate-pulse'}`} />
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{crashed ? 'CRASHED' : 'LIVE'}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  {isMega && !crashed && <span className="text-[10px] font-black bg-yellow-400 text-black px-2 py-0.5 rounded-full animate-bounce">MEGA</span>}
-                  <span className="text-xs text-gray-500 font-mono">Round #{currentRoundIndex}</span>
-                </div>
+          {/* Multiplier + Graph */}
+          <div className="flex flex-col lg:flex-row">
+            <div className="lg:w-56 flex flex-col items-center justify-center p-6 border-b lg:border-b-0 lg:border-r border-white/5">
+              <div className={`text-7xl lg:text-8xl font-black tracking-tighter transition-colors duration-300 ${
+                crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-white'
+              } ${crashed ? '' : 'multiplier-glow'}`}>
+                {clampedLive.toFixed(2)}<span className="text-4xl font-bold opacity-50">x</span>
               </div>
-
-              {/* Multiplier + Graph */}
-              <div className="flex flex-col lg:flex-row">
-                <div className="lg:w-48 flex flex-col items-center justify-center p-6 border-b lg:border-b-0 lg:border-r border-white/5">
-                  <div className={`text-6xl lg:text-7xl font-black tracking-tighter transition-colors duration-300 ${
-                    crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-white'
-                  } ${crashed ? '' : 'multiplier-glow'}`}>
-                    {clampedLive.toFixed(2)}<span className="text-3xl font-bold opacity-50">x</span>
-                  </div>
-                  <p className={`text-xs font-bold mt-2 text-center ${crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-gray-500'}`}>
-                    {crashed ? 'CRASHED' : isMega ? 'MEGA WIN' : 'CASH OUT'}
-                  </p>
-                </div>
-                <div className="flex-1 p-3" style={{ minHeight: '300px' }}>
-                  <MultiplierGraph
-                    progress={graphProgress}
-                    crashed={crashed}
-                    crashMultiplier={Math.min(crashMultiplier, maxMultiplier)}
-                    liveMultiplier={clampedLive}
-                  />
-                </div>
-              </div>
+              <p className={`text-sm font-bold mt-2 text-center ${crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-gray-500'}`}>
+                {crashed ? 'CRASHED' : isMega ? 'MEGA WIN' : 'CASH OUT'}
+              </p>
+            </div>
+            <div className="flex-1 p-3" style={{ minHeight: '340px' }}>
+              <MultiplierGraph
+                progress={graphProgress}
+                crashed={crashed}
+                crashMultiplier={Math.min(crashMultiplier, maxMultiplier)}
+                liveMultiplier={clampedLive}
+              />
             </div>
           </div>
         </div>
 
-        {/* ── Bottom Row: Signals + Live Bets ── */}
+        {/* ── Bottom: Bet Panels (left) + Live Bets/Cashouts (right) ── */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
 
-          {/* ── Signals ── */}
-          <div className="xl:col-span-2 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
-              <h3 className="font-black text-xs text-white uppercase tracking-widest">Signal History</h3>
-              <span className="text-xs text-[#8b5cf6] font-bold">95.2% ACCURATE</span>
+          {/* ── Bet Panels (2 cols) ── */}
+          <div className="xl:col-span-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
+              <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
             </div>
-            {!accessGranted ? (
-              <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
-                <div className="w-14 h-14 rounded-full bg-[#8b5cf6]/20 flex items-center justify-center">
-                  <svg className="w-7 h-7 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+
+            {/* Signals — below bet panels */}
+            <div className="mt-4 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
+                <h3 className="font-black text-xs text-white uppercase tracking-widest">Signal History</h3>
+                <span className="text-xs text-[#8b5cf6] font-bold">95.2% ACCURATE</span>
+              </div>
+              {!accessGranted ? (
+                <div className="flex flex-col items-center justify-center gap-3 py-8 px-6 text-center">
+                  <div className="w-12 h-12 rounded-full bg-[#8b5cf6]/20 flex items-center justify-center">
+                    <svg className="w-6 h-6 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                  </div>
+                  <p className="text-gray-400 text-sm">Purchase a package to unlock</p>
+                  <Link href="/packages" className="btn-glow btn-glow-purple bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white px-6 py-2.5 rounded-xl text-sm font-black border border-[#8b5cf6]/30">
+                    Buy from KSH 100
+                  </Link>
                 </div>
-                <p className="text-gray-400 text-sm">Purchase a package to unlock</p>
-                <Link href="/packages" className="btn-glow btn-glow-purple bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white px-6 py-2.5 rounded-xl text-sm font-black border border-[#8b5cf6]/30">
-                  Buy from KSH 100
-                </Link>
-              </div>
-            ) : !signalsRunning ? (
-              <div className="flex flex-col items-center justify-center gap-3 py-10 px-6 text-center">
-                <p className="text-yellow-400 font-bold text-sm">Signals Paused by Admin</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-white/5 max-h-[320px] overflow-y-auto scroll-smooth">
-                {signals.map((signal, i) => {
-                  const val = parseFloat(signal.multiplier)
-                  const win = signal.status === 'live'
-                  const mega = val > 100
-                  return (
-                    <div key={i} className="signal-row flex items-center justify-between px-5 py-2.5 transition-all">
-                      <div className="flex items-center gap-2.5">
-                        <span className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black ${win ? (mega ? 'bg-yellow-400/20 text-yellow-400' : 'bg-[#8b5cf6]/20 text-[#8b5cf6]') : 'bg-red-500/20 text-red-400'}`}>
-                          {win ? '✓' : '✗'}
-                        </span>
-                        <span className={`font-black text-sm ${win ? (mega ? 'text-yellow-400' : 'text-[#8b5cf6]') : 'text-red-400'}`}>
-                          {signal.multiplier}
-                        </span>
-                        <span className="text-[10px] text-gray-600">{win ? (mega ? 'MEGA' : 'WIN') : 'LOSS'}</span>
+              ) : !signalsRunning ? (
+                <div className="flex flex-col items-center justify-center gap-3 py-8 px-6 text-center">
+                  <p className="text-yellow-400 font-bold text-sm">Signals Paused by Admin</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-white/5 max-h-[260px] overflow-y-auto scroll-smooth">
+                  {signals.map((signal, i) => {
+                    const val = parseFloat(signal.multiplier)
+                    const win = signal.status === 'live'
+                    const mega = val > 100
+                    return (
+                      <div key={i} className="signal-row flex items-center justify-between px-5 py-2 transition-all">
+                        <div className="flex items-center gap-2.5">
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${win ? (mega ? 'bg-yellow-400/20 text-yellow-400' : 'bg-[#8b5cf6]/20 text-[#8b5cf6]') : 'bg-red-500/20 text-red-400'}`}>
+                            {win ? '✓' : '✗'}
+                          </span>
+                          <span className={`font-black text-sm ${win ? (mega ? 'text-yellow-400' : 'text-[#8b5cf6]') : 'text-red-400'}`}>
+                            {signal.multiplier}
+                          </span>
+                          <span className="text-[10px] text-gray-600">{win ? (mega ? 'MEGA' : 'WIN') : 'LOSS'}</span>
+                        </div>
+                        <span className="text-[10px] text-gray-500 font-mono">{signal.time}</span>
                       </div>
-                      <span className="text-[10px] text-gray-500 font-mono">{signal.time}</span>
-                    </div>
-                  )
-                })}
-              </div>
-            )}
+                    )
+                  })}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* ── Live Bets Table ── */}
+          {/* ── Live Bets / Cashouts (1 col, right) ── */}
           <div className="bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
             <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
-              <h3 className="font-black text-xs text-white uppercase tracking-widest">Live Bets</h3>
+              <h3 className="font-black text-xs text-white uppercase tracking-widest">Live Cashouts</h3>
               <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#8b5cf6] animate-pulse" />
-                <span className="text-xs text-[#8b5cf6] font-bold">{liveBets.length} players</span>
+                <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
+                <span className="text-xs text-[#22c55e] font-bold">{liveBets.length} online</span>
               </div>
             </div>
-            <div className="divide-y divide-white/5 max-h-[360px] overflow-y-auto scroll-smooth">
+            <div className="divide-y divide-white/5 max-h-[520px] overflow-y-auto scroll-smooth">
               {liveBets.map((bet, i) => (
-                <div key={i} className="flex items-center justify-between px-4 py-2 animate-slide-in">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-[9px] font-black ${
-                      bet.cashed ? 'bg-gradient-to-br from-[#8b5cf6] to-violet-700 text-white' : 'bg-white/10 text-gray-400'
+                <div key={i} className="flex items-center justify-between px-4 py-2.5 animate-slide-in hover:bg-white/[0.02] transition-colors">
+                  <div className="flex items-center gap-2.5">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black ${
+                      bet.cashed ? 'bg-gradient-to-br from-[#22c55e] to-green-700 text-white' : 'bg-white/10 text-gray-400'
                     }`}>
                       {bet.initials}
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-white truncate max-w-[80px]">{bet.name}</div>
-                      <div className="text-[10px] text-gray-500">KSH {bet.bet.toLocaleString()}</div>
+                      <div className="text-xs font-bold text-white truncate max-w-[90px]">{bet.name}</div>
+                      <div className="text-[10px] text-gray-500">Bet KSH {bet.bet.toLocaleString()}</div>
                     </div>
                   </div>
                   <div className="text-right">
                     {bet.cashed ? (
-                      <div className="text-[#22c55e] font-black text-xs">+{bet.payout.toLocaleString()}</div>
+                      <div className="flex flex-col items-end">
+                        <div className="text-[#22c55e] font-black text-sm">+{bet.payout.toLocaleString()}</div>
+                        <div className="text-[10px] text-gray-500">@ {bet.mul.toFixed(2)}x</div>
+                      </div>
                     ) : (
-                      <div className="text-yellow-400 font-black text-xs">{bet.mul.toFixed(2)}x</div>
+                      <div className="flex flex-col items-end">
+                        <div className="text-yellow-400 font-black text-sm animate-pulse">{bet.mul.toFixed(2)}x</div>
+                        <div className="text-[10px] text-gray-500">Playing</div>
+                      </div>
                     )}
                   </div>
                 </div>
