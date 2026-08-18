@@ -1,68 +1,89 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
-import type { CreatePaymentRequest, StkPushResponse } from '@/types/payment'
+import type { CreatePaymentRequest } from '@/types/payment'
+
+const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET_KEY || ''
 
 export async function POST(req: Request) {
-  // Note: This project previously had PayHero disabled. Here we implement the
-  // server-side wiring to create a payment record and return a "checkoutId".
-  // If PayHero integration keys are not set, we return 501.
-
   try {
     const body = (await req.json().catch(() => ({}))) as CreatePaymentRequest
-    console.log('Create-payment request body:', body)
 
     const phone = (body.phone || body.PhoneNumber || '').toString().trim()
     const amount = Number((body as { amount?: unknown }).amount ?? 0)
     const packageId = (body.packageId || body.Provider || '').toString().trim()
-    console.log('Parsed values - phone:', phone, 'packageId:', packageId, 'amount:', amount)
 
     if (!phone) {
-      console.log('Error: phone is required')
       return NextResponse.json({ error: 'phone is required' }, { status: 400 })
     }
     if (!packageId) {
-      console.log('Error: packageId is required')
       return NextResponse.json({ error: 'packageId is required' }, { status: 400 })
     }
     if (!amount || amount <= 0) {
-      console.log('Error: amount is required')
       return NextResponse.json({ error: 'amount is required' }, { status: 400 })
     }
 
-    // Create local payment record first (pending)
-    const checkoutId = `local_${Date.now()}_${Math.random().toString(16).slice(2)}`
-    console.log('Generated checkoutId:', checkoutId)
+    const reference = `avi_${Date.now()}_${Math.random().toString(16).slice(2, 8)}`
 
-    // Insert into Neon Postgres
     const result = await db()`
       insert into payments (phone, package_id, amount, status, checkout_id)
-      values (${phone}, ${packageId}, ${amount}, 'pending', ${checkoutId})
+      values (${phone}, ${packageId}, ${amount}, 'pending', ${reference})
       returning id
     `
-    console.log('Insert result:', result)
 
-    // PayHero integration (placeholder) — enabled only if env vars exist
-    const payheroEnabled = Boolean(process.env.PAYHERO_API_KEY)
-    console.log('PayHero enabled:', payheroEnabled)
-
-    if (!payheroEnabled) {
-      console.log('Returning mock response')
+    if (!PAYSTACK_SECRET) {
       return NextResponse.json({
-        message: 'PayHero not configured. Payment stored as pending.',
-        checkoutId,
+        message: 'Paystack not configured. Payment stored as pending.',
+        checkoutId: reference,
         provider: 'mock',
       })
     }
 
-    // TODO: Replace this mock with real PayHero STK push / checkout API call.
-    // Return the expected payload to your frontend.
-    const response: StkPushResponse = {
-      CheckoutRequestID: checkoutId,
-      ResponseCode: '0',
-      ResponseDescription: 'Mock STK push created',
+    const amountInKobo = Math.round(amount * 100)
+
+    const baseUrl = req.headers.get('origin') || 'http://localhost:3000'
+
+    const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: `${phone}@aviator.co.ke`,
+        amount: amountInKobo,
+        currency: 'KES',
+        reference,
+        callback_url: `${baseUrl}/payment/success?transaction=${reference}&package=${packageId}&amount=${amount}&phone=${phone}`,
+        metadata: {
+          phone,
+          package_id: packageId,
+          payment_id: result[0]?.id,
+        },
+        mobile_money: {
+          phone: phone.startsWith('0') ? `254${phone.slice(1)}` : phone,
+        },
+      }),
+    })
+
+    const paystackData = await paystackRes.json()
+
+    if (!paystackRes.ok || !paystackData.status) {
+      return NextResponse.json(
+        { error: paystackData.message || 'Paystack initialization failed', checkoutId: reference },
+        { status: 400 }
+      )
     }
 
-    return NextResponse.json({ checkoutId, stk: response })
+    return NextResponse.json({
+      checkoutId: reference,
+      authorization_url: paystackData.data?.authorization_url,
+      access_code: paystackData.data?.access_code,
+      stk: {
+        CheckoutRequestID: reference,
+        ResponseCode: '0',
+        ResponseDescription: 'STK push initiated via Paystack',
+      },
+    })
   } catch (error) {
     console.error('Create-payment error:', error)
     return NextResponse.json({ error: String(error) }, { status: 500 })

@@ -14,10 +14,10 @@ export default function Home() {
             <span className="block text-4xl font-normal text-[#22c55e] multiplier-glow mt-2">SIGNALS</span>
           </h1>
           <p className="text-3xl md:text-4xl mb-8 text-[#22c55e] font-semibold pulse">
-            95.2% WIN RATE • LIVE CRASH PREDICTIONS
+            95.2% WIN RATE &bull; LIVE CRASH PREDICTIONS
           </p>
           <p className="text-2xl mb-12 max-w-3xl mx-auto opacity-80 text-gray-300">
-            Get instant cashout signals for <span className="font-black text-red-400">Betika • Pepeta • Odibet • Melbet</span>{' '}
+            Get instant cashout signals for <span className="font-black text-red-400">Betika &bull; Pepeta &bull; Odibet &bull; Melbet</span>{' '}
             and every Aviator game. Start from KSH 100!
           </p>
           <div className="flex flex-col lg:flex-row gap-6 justify-center items-center mb-16">
@@ -31,15 +31,15 @@ export default function Home() {
               href="/dashboard"
               className="glass bg-[#111827] text-[#22c55e] text-xl font-bold px-12 py-6 rounded-2xl hover:scale-105 transition-all shadow-2xl border-2 border-[#22c55e]/50 multiplier-glow"
             >
-              LIVE DASHBOARD ➡️
+              LIVE DASHBOARD
             </Link>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mb-8">
-            <div className="glass p-6 rounded-2xl border border-[#22c55e]/20">
+            <div className="glass p-6 rounded-2xl border border-[#22c55e]/20 hover:scale-105 transition-all">
               <span className="text-4xl font-black block text-[#22c55e] multiplier-glow">1.5x - 25x</span>
               <span className="opacity-70 text-gray-400">Multipliers</span>
             </div>
-            <div className="glass p-6 rounded-2xl border border-red-500/20">
+            <div className="glass p-6 rounded-2xl border border-red-500/20 hover:scale-105 transition-all">
               <span className="text-4xl font-black block text-red-400">KSH 100</span>
               <span className="opacity-70 text-gray-400">Min Package</span>
             </div>
@@ -47,7 +47,7 @@ export default function Home() {
               <span className="text-4xl font-black block text-[#22c55e]">24/7</span>
               <span className="opacity-70 text-gray-400">Live Support</span>
             </Link>
-            <div className="glass p-6 rounded-2xl border border-red-500/20">
+            <div className="glass p-6 rounded-2xl border border-red-500/20 hover:scale-105 transition-all">
               <span className="text-4xl font-black block text-red-400">15s AVG</span>
               <span className="opacity-70 text-gray-400">Signal Delay</span>
             </div>
@@ -57,19 +57,24 @@ export default function Home() {
       <section className="py-24 px-4 bg-[#0a0e17]">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl font-black text-center mb-20 text-[#22c55e] multiplier-glow">
-            ✅ PROVEN ON ALL PLATFORMS
+            PROVEN ON ALL PLATFORMS
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-12 items-center justify-items-center">
-            <div className="text-3xl font-black text-red-400 glass p-6 rounded-2xl w-full text-center hover:scale-110 transition-all border border-red-500/20">🏆 BETIKA</div>
-            <div className="text-3xl font-black text-[#22c55e] glass p-6 rounded-2xl w-full text-center hover:scale-110 transition-all border border-[#22c55e]/20">⚡ PEPETA</div>
-            <div className="text-3xl font-black text-red-400 glass p-6 rounded-2xl w-full text-center hover:scale-110 transition-all border border-red-500/20">🎯 ODITBET</div>
-            <div className="text-3xl font-black text-[#22c55e] glass p-6 rounded-2xl w-full text-center hover:scale-110 transition-all border border-[#22c55e]/20">⭐ MELBET</div>
-            <div className="text-3xl font-black text-red-400 glass p-6 rounded-2xl w-full text-center hover:scale-110 transition-all border border-red-500/20">📱 1XBET</div>
-            <div className="text-3xl font-black text-[#22c55e] glass p-6 rounded-2xl w-full text-center hover:scale-110 transition-all border border-[#22c55e]/20">🎰 ALL SITES</div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 items-center justify-items-center">
+            {[
+              { name: 'BETIKA', color: 'text-red-400', border: 'border-red-500/20' },
+              { name: 'PEPETA', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20' },
+              { name: 'ODIBET', color: 'text-red-400', border: 'border-red-500/20' },
+              { name: 'MELBET', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20' },
+              { name: '1XBET', color: 'text-red-400', border: 'border-red-500/20' },
+              { name: 'ALL SITES', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20' },
+            ].map((p) => (
+              <div key={p.name} className={`text-2xl font-black ${p.color} glass p-6 rounded-2xl w-full text-center hover:scale-110 transition-all border ${p.border}`}>
+                {p.name}
+              </div>
+            ))}
           </div>
         </div>
       </section>
     </div>
   );
 }
-

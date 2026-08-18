@@ -34,3 +34,16 @@ create table if not exists sessions (
 
 create index if not exists sessions_token_idx on sessions (token);
 create index if not exists sessions_admin_id_idx on sessions (admin_id);
+
+-- Admin signal settings
+create table if not exists admin_settings (
+  id uuid primary key default gen_random_uuid(),
+  key text unique not null,
+  value text not null default '',
+  updated_at timestamptz not null default now()
+);
+
+insert into admin_settings (key, value) values
+  ('max_multiplier', '100'),
+  ('signals_running', 'false')
+on conflict (key) do nothing;

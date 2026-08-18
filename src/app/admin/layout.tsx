@@ -5,8 +5,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const navItems = [
-  { href: '/admin/dashboard', label: 'Dashboard', icon: '📊' },
-  { href: '/admin/payments', label: 'Payments', icon: '💳' },
+  { href: '/admin/dashboard', label: 'Dashboard', icon: '■' },
+  { href: '/admin/payments', label: 'Payments', icon: '▣' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -59,7 +59,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <aside className="w-64 min-h-screen glass border-r border-gray-700/50 p-6 hidden lg:block">
           <div className="mb-8">
             <Link href="/admin/dashboard">
-              <div className="text-2xl font-black text-[#22c55e]">⚙️ Admin</div>
+              <div className="text-2xl font-black text-[#22c55e]">Admin</div>
             </Link>
           </div>
 
@@ -85,7 +85,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-all"
             >
-              <span>🚪</span>
+              <span className="w-2 h-2 rounded-full inline-block bg-red-400" />
               <span>Logout</span>
             </button>
           </div>
@@ -118,7 +118,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
           ))}
           <button onClick={handleLogout} className="flex flex-col items-center gap-1 px-4 py-2 text-red-400">
-            <span className="text-xl">🚪</span>
             <span className="text-xs">Logout</span>
           </button>
         </div>

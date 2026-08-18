@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { db } from '@/lib/db'
+import { db, getCached } from '@/lib/db'
 
 const PACKAGE_DURATIONS: Record<string, number> = {
   basic: 30,
@@ -16,21 +16,25 @@ export async function GET(req: Request) {
   }
 
   try {
-    const rows = await db()`
-      select package_id, amount, created_at
-      from payments
-      where phone = ${phone}
-        and status = 'paid'
-      order by created_at desc
-      limit 1
-    `
+    const accessData = await getCached(`access:${phone}`, 5000, async () => {
+      const rows = await db()`
+        select package_id, amount, created_at
+        from payments
+        where phone = ${phone}
+          and status = 'paid'
+        order by created_at desc
+        limit 1
+      `
+      return rows
+    })
+
+    const rows = accessData as { package_id: string; amount: string | number; created_at: string }[]
 
     if (rows.length === 0) {
       return NextResponse.json({ hasAccess: false, message: 'No active payment found' })
     }
 
-    const data = rows[0] as { package_id: string; amount: string | number; created_at: string }
-
+    const data = rows[0]
     const durationMin = PACKAGE_DURATIONS[data.package_id]
     if (!durationMin) {
       return NextResponse.json({ hasAccess: false, message: 'Unknown package' })

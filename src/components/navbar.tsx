@@ -7,9 +7,12 @@ export default function Navbar() {
     <nav className="bg-[#111827] text-white shadow-lg border-b border-[#22c55e]/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/betika-logo.jpg" alt="Betika" className="h-10 w-auto rounded" />
+            </Link>
             <Link href="/" className="text-2xl font-bold text-red-400">
-              🚀 <span className="text-[#22c55e]">Aviator</span> Signals
+              <span className="text-[#22c55e]">Aviator</span> Signals
             </Link>
           </div>
           <div className="flex items-center space-x-4">

@@ -102,14 +102,17 @@ export default function Packages() {
         return
       }
 
-      const params = new URLSearchParams({
-        transaction: data.checkoutId || '',
-        package: pkg.id,
-        amount: String(pkg.price),
-        phone,
-      })
-
-      window.location.href = `/payment/success?${params.toString()}`
+      if (data.authorization_url) {
+        window.location.href = data.authorization_url
+      } else {
+        const params = new URLSearchParams({
+          transaction: data.checkoutId || '',
+          package: pkg.id,
+          amount: String(pkg.price),
+          phone,
+        })
+        window.location.href = `/payment/success?${params.toString()}`
+      }
     } finally {
       setLoading(false)
     }

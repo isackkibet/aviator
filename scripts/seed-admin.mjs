@@ -3,6 +3,14 @@
 //
 // Requires DATABASE_URL in .env.local
 
+import dns from 'dns'
+const origLookup = dns.lookup.bind(dns)
+dns.lookup = function (hostname, options, callback) {
+  if (typeof options === 'function') { callback = options; options = {} }
+  options = { ...options, family: 4 }
+  return origLookup(hostname, options, callback)
+}
+
 import { neon } from '@neondatabase/serverless'
 import crypto from 'crypto'
 import { readFileSync } from 'fs'
