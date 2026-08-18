@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import crypto from 'crypto'
 
+const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || '').toLowerCase().trim()
+
 function hashPassword(password: string, salt: string): string {
   return crypto.pbkdf2Sync(password, salt, 10000, 64, 'sha512').toString('hex')
 }
@@ -11,6 +13,11 @@ export async function POST(req: Request) {
 
   if (!email || !password) {
     return NextResponse.json({ error: 'Email and password required' }, { status: 400 })
+  }
+
+  // Block non-admin emails immediately
+  if (ADMIN_EMAIL && email.toLowerCase().trim() !== ADMIN_EMAIL) {
+    return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 })
   }
 
   try {

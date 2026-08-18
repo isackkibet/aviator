@@ -45,9 +45,9 @@ function hashPassword(password, salt) {
 }
 
 async function main() {
-  const email = process.argv[2] || 'admin@example.com'
-  const password = process.argv[3] || 'admin123'
-  const name = process.argv[4] || 'Super Admin'
+  const email = process.argv[2] || 'isackkibet97@gmail.com'
+  const password = process.argv[3] || 'isack464851232'
+  const name = process.argv[4] || 'Isack Admin'
 
   const salt = crypto.randomBytes(16).toString('hex')
   const hashed = hashPassword(password, salt)
