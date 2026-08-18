@@ -9,6 +9,35 @@ const phones = ['+254712345678', '+254722987654', '+254733456789', '+25474456789
 const amounts = ['2,450', '8,720', '15,300', '4,890', '22,100', '9,650', '31,200', '5,870', '68,500', '125,000', '89,300', '156,700', '243,000', '78,900', '198,500', '312,000', '445,000', '567,800', '78,200', '156,000']
 const emojis = ['JK', 'MW', 'AS', 'FM', 'PO', 'SK', 'DM', 'AH', 'JN', 'GL']
 
+const chatNames = ['Brian K.', 'Wanjiku M.', 'Hassan A.', 'Nancy O.', 'Kevin N.', 'Aisha B.', 'Dennis M.', 'Rose W.', 'Samuel K.', 'Mercy L.', 'Victor O.', 'Jane P.', 'Martin K.', 'Lucy W.', 'James M.', 'Faith N.', 'Eric S.', 'Catherine M.', 'Daniel K.', 'Ann W.', 'Patrick O.', 'Beatrice N.', 'Andrew M.', 'Gladys K.']
+
+const chatMessages = [
+  { text: 'just cashed out {mul}x! ameweka sana', type: 'cashout' },
+  { text: 'won KSH {amt} on {mul}x multiplier', type: 'cashout' },
+  { text: 'VIP package ni best, signals are 100%', type: 'review' },
+  { text: 'I paid 500 yesterday, already made 8K back', type: 'review' },
+  { text: 'cashed out at {mul}x, next round!', type: 'cashout' },
+  { text: 'this is real, just got {amt} from {mul}x', type: 'cashout' },
+  { text: 'VIP signals are so accurate, love it', type: 'review' },
+  { text: 'started with 100, now I have {amt}', type: 'cashout' },
+  { text: 'Betika aviator + these signals = money', type: 'review' },
+  { text: '{mul}x cashout done! lete ile inafuata', type: 'cashout' },
+  { text: 'just joined VIP, already seeing results', type: 'review' },
+  { text: 'cashed out {mul}x before crash, sweet!', type: 'cashout' },
+  { text: 'KSH {amt} profit today, signals work', type: 'cashout' },
+  { text: 'best investment I made this month', type: 'review' },
+  { text: 'odibet aviator + signals = easy money', type: 'review' },
+  { text: 'got the signal, cashed out at {mul}x', type: 'cashout' },
+  { text: '15 minutes ago I had nothing, now {amt}', type: 'cashout' },
+  { text: 'Pro package is worth every cent', type: 'review' },
+  { text: 'someone just told me about this, it works', type: 'review' },
+  { text: 'never believed until I made KSH {amt}', type: 'cashout' },
+  { text: 'my third day using signals, all wins', type: 'review' },
+  { text: '{mul}x multiplier, I cashed out just in time', type: 'cashout' },
+  { text: 'paid KSH 200, made {amt} already', type: 'cashout' },
+  { text: 'these predictions are crazy accurate', type: 'review' },
+]
+
 const ROUND_MS = 12000
 
 function mulberry32(a: number) {
@@ -328,6 +357,19 @@ export default function Dashboard() {
   const [accessLoading, setAccessLoading] = useState(true)
   const [signalsRunning, setSignalsRunning] = useState(true)
   const [maxMultiplier, setMaxMultiplier] = useState(100)
+  const [chatFeed, setChatFeed] = useState<Array<{ id: number; name: string; initials: string; text: string; type: 'cashout' | 'review'; time: string }>>([])
+
+  function generateChatMessage(id: number) {
+    const rand = mulberry32(id + Date.now())
+    const name = chatNames[Math.floor(rand() * chatNames.length)]
+    const initials = name.split(' ').map(w => w[0]).join('')
+    const template = chatMessages[Math.floor(rand() * chatMessages.length)]
+    const mul = (1.5 + rand() * 25).toFixed(1)
+    const amt = Math.floor(1000 + rand() * 49000).toLocaleString()
+    const text = template.text.replace('{mul}', mul).replace('{amt}', amt)
+    const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+    return { id, name, initials, text, type: template.type as 'cashout' | 'review', time }
+  }
 
   // Fetch admin settings
   useEffect(() => {
@@ -365,6 +407,25 @@ export default function Dashboard() {
         setAccessMessage('Could not verify access')
       })
       .finally(() => setAccessLoading(false))
+  }, [])
+
+  // Live chat feed
+  useEffect(() => {
+    let chatId = 0
+    const initial: Array<{ id: number; name: string; initials: string; text: string; type: 'cashout' | 'review'; time: string }> = []
+    for (let i = 0; i < 6; i++) {
+      initial.push(generateChatMessage(chatId++))
+    }
+    setChatFeed(initial)
+
+    const interval = setInterval(() => {
+      setChatFeed((prev) => {
+        const next = [...prev, generateChatMessage(chatId++)]
+        return next.slice(-15)
+      })
+    }, 3000 + Math.random() * 4000)
+
+    return () => clearInterval(interval)
   }, [])
 
   // Real-time loop
@@ -567,7 +628,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ── Right: Recent Wins ── */}
+          {/* ── Right: Chat + Wins ── */}
           <div className="space-y-6">
             {/* CTA if no access */}
             {!accessGranted && !accessLoading && (
@@ -584,6 +645,40 @@ export default function Dashboard() {
                 </div>
               </Link>
             )}
+
+            {/* Live Chat Feed */}
+            <div className="fade-up fade-up-5 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
+                <h3 className="font-black text-sm text-white uppercase tracking-widest">Live Activity</h3>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse inline-block pulse-ring" />
+                  <span className="text-xs text-[#22c55e] font-bold">{chatFeed.length} online</span>
+                </div>
+              </div>
+              <div className="divide-y divide-white/5 max-h-[380px] overflow-y-auto scroll-smooth">
+                {chatFeed.map((msg) => (
+                  <div key={msg.id} className="flex items-start gap-3 px-4 py-3 animate-slide-in hover:bg-white/[0.02] transition-colors">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${
+                      msg.type === 'cashout'
+                        ? 'bg-gradient-to-br from-[#22c55e] to-green-700 text-black'
+                        : 'bg-gradient-to-br from-blue-500 to-blue-700 text-white'
+                    }`}>
+                      {msg.initials}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="font-bold text-xs text-white truncate">{msg.name}</span>
+                        {msg.type === 'cashout' && (
+                          <span className="text-[9px] bg-[#22c55e]/20 text-[#22c55e] px-1.5 py-0.5 rounded font-black shrink-0">WIN</span>
+                        )}
+                        <span className="text-[10px] text-gray-600 ml-auto shrink-0">{msg.time}</span>
+                      </div>
+                      <p className="text-xs text-gray-400 leading-relaxed">{msg.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* Recent wins card */}
             <div className="fade-up fade-up-6 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
