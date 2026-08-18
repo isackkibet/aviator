@@ -533,30 +533,48 @@ export default function Dashboard() {
     return 'bg-gray-600 text-gray-200'
   }
 
+  const [liveBetTab, setLiveBetTab] = useState<'all' | 'my' | 'top'>('all')
+
   return (
     <div className="min-h-screen bg-[#0a0e17] text-white">
 
-      {/* ── Top Bar ── */}
+      {/* ═══════════════════════════════════════════════════════════════════════
+          1. TOP BAR — Balance, Sound, Settings, Round ID, Player Count
+          ═══════════════════════════════════════════════════════════════════════ */}
       <div className="border-b border-white/5 bg-[#0d1117]">
-        <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center justify-between">
+          {/* Left: Logo + Brand */}
+          <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2">
               <img src="/betika-logo.jpg" alt="Betika" className="w-8 h-8 rounded-full object-cover border border-[#8b5cf6]/50" />
               <span className="text-sm font-black"><span className="text-[#8b5cf6]">Aviator</span> Signals</span>
             </Link>
           </div>
-          <div className="flex items-center gap-4">
+          {/* Right: Balance, Sound, Settings, Players, Round */}
+          <div className="flex items-center gap-3">
+            {/* Balance */}
             <div className="flex items-center gap-2 bg-white/5 rounded-lg px-3 py-1.5 border border-white/10">
               <svg className="w-4 h-4 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               <span className="text-sm font-bold text-white">KSH {balance.toLocaleString()}</span>
             </div>
-            <div className="text-xs text-gray-500 font-mono">#{currentRoundIndex}</div>
+            {/* Sound */}
+            <button className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+            </button>
+            {/* Players Online */}
+            <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/5 border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
+              <span className="text-xs text-gray-400 font-bold">{liveBets.length}</span>
+            </div>
+            {/* Round ID */}
+            <div className="text-xs text-gray-500 font-mono bg-white/5 rounded-lg px-2.5 py-1.5 border border-white/10">#{currentRoundIndex}</div>
+            {/* VIP Badge */}
             {!accessLoading && (
               <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold ${
                 accessGranted ? 'border-[#8b5cf6]/30 text-[#8b5cf6] bg-[#8b5cf6]/10' : 'border-red-500/30 text-red-400 bg-red-500/10'
               }`}>
                 <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: accessGranted ? '#8b5cf6' : '#ef4444' }} />
-                {accessGranted ? 'VIP ACTIVE' : 'NO ACCESS'}
+                {accessGranted ? 'VIP' : 'LOCKED'}
               </div>
             )}
           </div>
@@ -574,153 +592,144 @@ export default function Dashboard() {
         </div>
       )}
 
-      <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="max-w-[1400px] mx-auto px-4 py-3">
 
-        {/* ── Round History Bar ── */}
-        <div className="mb-3 flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
-          <span className="text-xs text-gray-500 font-bold shrink-0 mr-2">HISTORY</span>
-          {roundHistory.map((mul, i) => (
-            <div key={i} className={`px-2.5 py-1 rounded-md text-xs font-black shrink-0 ${getHistoryColor(mul)}`}>
-              {mul.toFixed(2)}x
-            </div>
-          ))}
-        </div>
+        {/* ═══════════════════════════════════════════════════════════════════════
+            2. MAIN AREA — Chart (center) + Live Bets Panel (right)
+            ═══════════════════════════════════════════════════════════════════════ */}
+        <div className="flex flex-col lg:flex-row gap-3 mb-3">
 
-        {/* ── Live Chart (full width, top) ── */}
-        <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 mb-4 ${
-          crashed ? 'border-red-500/40' : isMega ? 'border-yellow-400/40' : 'border-[#8b5cf6]/20'
-        }`}>
-          {/* Graph header */}
-          <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
-            <div className="flex items-center gap-3">
-              <span className={`w-2 h-2 rounded-full ${crashed ? 'bg-red-400' : 'bg-[#f97316] animate-pulse'}`} />
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{crashed ? 'CRASHED' : 'LIVE'}</span>
-            </div>
-            <div className="flex items-center gap-3">
-              {isMega && !crashed && <span className="text-[10px] font-black bg-yellow-400 text-black px-2 py-0.5 rounded-full animate-bounce">MEGA</span>}
-              <span className="text-xs text-gray-500 font-mono">Round #{currentRoundIndex}</span>
-            </div>
-          </div>
-
-          {/* Multiplier + Graph */}
-          <div className="flex flex-col lg:flex-row">
-            <div className="lg:w-56 flex flex-col items-center justify-center p-6 border-b lg:border-b-0 lg:border-r border-white/5">
-              <div className={`text-7xl lg:text-8xl font-black tracking-tighter transition-colors duration-300 ${
-                crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-white'
-              } ${crashed ? '' : 'multiplier-glow'}`}>
-                {clampedLive.toFixed(2)}<span className="text-4xl font-bold opacity-50">x</span>
-              </div>
-              <p className={`text-sm font-bold mt-2 text-center ${crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-gray-500'}`}>
-                {crashed ? 'CRASHED' : isMega ? 'MEGA WIN' : 'CASH OUT'}
-              </p>
-            </div>
-            <div className="flex-1 p-3" style={{ minHeight: '340px' }}>
-              <MultiplierGraph
-                progress={graphProgress}
-                crashed={crashed}
-                crashMultiplier={Math.min(crashMultiplier, maxMultiplier)}
-                liveMultiplier={clampedLive}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* ── Bottom: Bet Panels (left) + Live Bets/Cashouts (right) ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-
-          {/* ── Bet Panels (2 cols) ── */}
-          <div className="xl:col-span-2">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
-              <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
-            </div>
-
-            {/* Signals — below bet panels */}
-            <div className="mt-4 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
-              <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
-                <h3 className="font-black text-xs text-white uppercase tracking-widest">Signal History</h3>
-                <span className="text-xs text-[#8b5cf6] font-bold">95.2% ACCURATE</span>
-              </div>
-              {!accessGranted ? (
-                <div className="flex flex-col items-center justify-center gap-3 py-8 px-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-[#8b5cf6]/20 flex items-center justify-center">
-                    <svg className="w-6 h-6 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                  </div>
-                  <p className="text-gray-400 text-sm">Purchase a package to unlock</p>
-                  <Link href="/packages" className="btn-glow btn-glow-purple bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white px-6 py-2.5 rounded-xl text-sm font-black border border-[#8b5cf6]/30">
-                    Buy from KSH 100
-                  </Link>
-                </div>
-              ) : !signalsRunning ? (
-                <div className="flex flex-col items-center justify-center gap-3 py-8 px-6 text-center">
-                  <p className="text-yellow-400 font-bold text-sm">Signals Paused by Admin</p>
-                </div>
-              ) : (
-                <div className="divide-y divide-white/5 max-h-[260px] overflow-y-auto scroll-smooth">
-                  {signals.map((signal, i) => {
-                    const val = parseFloat(signal.multiplier)
-                    const win = signal.status === 'live'
-                    const mega = val > 100
-                    return (
-                      <div key={i} className="signal-row flex items-center justify-between px-5 py-2 transition-all">
-                        <div className="flex items-center gap-2.5">
-                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black ${win ? (mega ? 'bg-yellow-400/20 text-yellow-400' : 'bg-[#8b5cf6]/20 text-[#8b5cf6]') : 'bg-red-500/20 text-red-400'}`}>
-                            {win ? '✓' : '✗'}
-                          </span>
-                          <span className={`font-black text-sm ${win ? (mega ? 'text-yellow-400' : 'text-[#8b5cf6]') : 'text-red-400'}`}>
-                            {signal.multiplier}
-                          </span>
-                          <span className="text-[10px] text-gray-600">{win ? (mega ? 'MEGA' : 'WIN') : 'LOSS'}</span>
-                        </div>
-                        <span className="text-[10px] text-gray-500 font-mono">{signal.time}</span>
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* ── Live Bets / Cashouts (1 col, right) ── */}
-          <div className="bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-2.5 border-b border-white/5">
-              <h3 className="font-black text-xs text-white uppercase tracking-widest">Live Cashouts</h3>
-              <div className="flex items-center gap-1.5">
-                <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-                <span className="text-xs text-[#22c55e] font-bold">{liveBets.length} online</span>
-              </div>
-            </div>
-            <div className="divide-y divide-white/5 max-h-[520px] overflow-y-auto scroll-smooth">
-              {liveBets.map((bet, i) => (
-                <div key={i} className="flex items-center justify-between px-4 py-2.5 animate-slide-in hover:bg-white/[0.02] transition-colors">
-                  <div className="flex items-center gap-2.5">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[10px] font-black ${
-                      bet.cashed ? 'bg-gradient-to-br from-[#22c55e] to-green-700 text-white' : 'bg-white/10 text-gray-400'
-                    }`}>
-                      {bet.initials}
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-white truncate max-w-[90px]">{bet.name}</div>
-                      <div className="text-[10px] text-gray-500">Bet KSH {bet.bet.toLocaleString()}</div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    {bet.cashed ? (
-                      <div className="flex flex-col items-end">
-                        <div className="text-[#22c55e] font-black text-sm">+{bet.payout.toLocaleString()}</div>
-                        <div className="text-[10px] text-gray-500">@ {bet.mul.toFixed(2)}x</div>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-end">
-                        <div className="text-yellow-400 font-black text-sm animate-pulse">{bet.mul.toFixed(2)}x</div>
-                        <div className="text-[10px] text-gray-500">Playing</div>
-                      </div>
-                    )}
-                  </div>
+          {/* ── Chart Section (center, largest) ── */}
+          <div className="flex-1 min-w-0">
+            {/* Round History Strip */}
+            <div className="mb-2 flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+              {roundHistory.map((mul, i) => (
+                <div key={i} className={`px-2 py-0.5 rounded text-[10px] font-black shrink-0 ${getHistoryColor(mul)}`}>
+                  {mul.toFixed(2)}x
                 </div>
               ))}
             </div>
+
+            {/* Chart Card */}
+            <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${
+              crashed ? 'border-red-500/40' : isMega ? 'border-yellow-400/40' : 'border-[#8b5cf6]/20'
+            }`}>
+              {/* Graph header */}
+              <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
+                <div className="flex items-center gap-2">
+                  <span className={`w-2 h-2 rounded-full ${crashed ? 'bg-red-400' : 'bg-[#f97316] animate-pulse'}`} />
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{crashed ? 'CRASHED' : 'LIVE'}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {isMega && !crashed && <span className="text-[9px] font-black bg-yellow-400 text-black px-2 py-0.5 rounded-full animate-bounce">MEGA</span>}
+                </div>
+              </div>
+
+              {/* Multiplier + Graph */}
+              <div className="relative">
+                {/* Large multiplier overlaid center-top */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none">
+                  <div className={`text-6xl sm:text-7xl lg:text-8xl font-black tracking-tighter transition-colors duration-300 drop-shadow-2xl ${
+                    crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-white'
+                  } ${crashed ? '' : 'multiplier-glow'}`}>
+                    {clampedLive.toFixed(2)}<span className="text-3xl sm:text-4xl font-bold opacity-50">x</span>
+                  </div>
+                  <p className={`text-xs font-bold mt-1 ${crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-gray-400'}`}>
+                    {crashed ? 'CRASHED' : isMega ? 'MEGA WIN' : 'CASH OUT'}
+                  </p>
+                </div>
+                {/* Graph */}
+                <div className="p-3" style={{ minHeight: '340px' }}>
+                  <MultiplierGraph
+                    progress={graphProgress}
+                    crashed={crashed}
+                    crashMultiplier={Math.min(crashMultiplier, maxMultiplier)}
+                    liveMultiplier={clampedLive}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* ── Side Panel: Live Bets / Players (right) ── */}
+          <div className="w-full lg:w-80 xl:w-96 shrink-0 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden flex flex-col">
+            {/* Tabs */}
+            <div className="flex border-b border-white/5">
+              {([
+                { key: 'all' as const, label: 'All Bets' },
+                { key: 'my' as const, label: 'My Bets' },
+                { key: 'top' as const, label: 'Top Wins' },
+              ]).map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setLiveBetTab(tab.key)}
+                  className={`flex-1 py-2.5 text-[10px] font-black uppercase tracking-wider transition-all ${
+                    liveBetTab === tab.key
+                      ? 'text-[#8b5cf6] border-b-2 border-[#8b5cf6] bg-[#8b5cf6]/5'
+                      : 'text-gray-500 hover:text-gray-300'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Column Headers */}
+            <div className="flex items-center px-4 py-2 border-b border-white/5 text-[9px] font-bold text-gray-500 uppercase tracking-wider">
+              <span className="flex-1">Player</span>
+              <span className="w-16 text-right">Bet</span>
+              <span className="w-14 text-right">Mul</span>
+              <span className="w-20 text-right">Payout</span>
+            </div>
+
+            {/* Bets List */}
+            <div className="flex-1 divide-y divide-white/5 overflow-y-auto scroll-smooth">
+              {liveBetTab === 'top'
+                ? [...liveBets].filter(b => b.cashed).sort((a, b) => b.payout - a.payout).slice(0, 20).map((bet, i) => (
+                    <div key={i} className="flex items-center px-4 py-2 hover:bg-white/[0.02] transition-colors">
+                      <div className="flex-1 flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center text-[8px] font-black text-black">{bet.initials}</div>
+                        <span className="text-xs font-bold text-white truncate">{bet.name}</span>
+                      </div>
+                      <span className="w-16 text-right text-[10px] text-gray-400">{bet.bet.toLocaleString()}</span>
+                      <span className="w-14 text-right text-[10px] text-yellow-400 font-bold">{bet.mul.toFixed(2)}x</span>
+                      <span className="w-20 text-right text-xs font-black text-[#22c55e]">+{bet.payout.toLocaleString()}</span>
+                    </div>
+                  ))
+                : liveBetTab === 'my'
+                  ? (
+                    <div className="flex flex-col items-center justify-center py-10 text-center">
+                      <p className="text-gray-500 text-xs">Place a bet to see it here</p>
+                    </div>
+                  )
+                  : liveBets.map((bet, i) => (
+                    <div key={i} className="flex items-center px-4 py-2 hover:bg-white/[0.02] transition-colors animate-slide-in">
+                      <div className="flex-1 flex items-center gap-2 min-w-0">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-black shrink-0 ${
+                          bet.cashed ? 'bg-gradient-to-br from-[#22c55e] to-green-700 text-white' : 'bg-white/10 text-gray-400'
+                        }`}>
+                          {bet.initials}
+                        </div>
+                        <span className="text-xs font-bold text-white truncate">{bet.name}</span>
+                      </div>
+                      <span className="w-16 text-right text-[10px] text-gray-400">{bet.bet.toLocaleString()}</span>
+                      <span className={`w-14 text-right text-[10px] font-bold ${bet.cashed ? 'text-[#22c55e]' : 'text-yellow-400'}`}>{bet.mul.toFixed(2)}x</span>
+                      <span className="w-20 text-right text-xs font-black text-[#22c55e]">
+                        {bet.cashed ? `+${bet.payout.toLocaleString()}` : <span className="text-gray-600 animate-pulse">...</span>}
+                      </span>
+                    </div>
+                  ))
+              }
+            </div>
+          </div>
+        </div>
+
+        {/* ═══════════════════════════════════════════════════════════════════════
+            3. BOTTOM PANEL — Bet Controls (full width, two side-by-side)
+            ═══════════════════════════════════════════════════════════════════════ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
+          <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
         </div>
       </div>
     </div>
