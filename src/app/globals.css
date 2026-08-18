@@ -7,11 +7,11 @@
   --popover: 220 25% 10%;
   --border: 220 20% 18%;
   --input: 220 20% 15%;
-  --ring: 142 100% 50%;
+  --ring: 263 70% 50%;
   --aviator-bg: #0a0e17;
   --aviator-card: #111827;
   --aviator-red: 0 84% 55%;
-  --aviator-green: 142 100% 50%;
+  --aviator-green: 263 70% 50%;
   --aviator-grid: 160 80% 25%;
 }
 
@@ -31,8 +31,8 @@ body {
 /* ─── Core Animations ─────────────────────────────────────── */
 
 @keyframes multiplier-glow {
-  0%, 100% { text-shadow: 0 0 20px hsl(142 100% 50% / 0.6), 0 0 60px hsl(142 100% 50% / 0.2); }
-  50% { text-shadow: 0 0 40px hsl(142 100% 50% / 1), 0 0 80px hsl(142 100% 50% / 0.4); }
+  0%, 100% { text-shadow: 0 0 20px hsl(263 70% 50% / 0.6), 0 0 60px hsl(263 70% 50% / 0.2); }
+  50% { text-shadow: 0 0 40px hsl(263 70% 50% / 1), 0 0 80px hsl(263 70% 50% / 0.4); }
 }
 
 @keyframes pulse {
@@ -62,14 +62,14 @@ body {
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
   background: rgba(17, 24, 39, 0.7);
-  border: 1px solid rgba(34, 197, 94, 0.15);
+  border: 1px solid rgba(139, 92, 246, 0.15);
 }
 
 .glass-strong {
   -webkit-backdrop-filter: blur(30px);
   backdrop-filter: blur(30px);
   background: rgba(10, 14, 23, 0.85);
-  border: 1px solid rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(139, 92, 246, 0.12);
 }
 
 /* ─── Card Hover Glow ─────────────────────────────────────── */
@@ -95,7 +95,7 @@ body {
 }
 .card-glow:hover {
   transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 32px rgba(34, 197, 94, 0.12), 0 0 0 1px rgba(34, 197, 94, 0.15);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.12), 0 0 0 1px rgba(139, 92, 246, 0.15);
 }
 .card-glow > * {
   position: relative;
@@ -129,9 +129,9 @@ body {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(34, 197, 94, 0.06) 40%,
-    rgba(34, 197, 94, 0.12) 50%,
-    rgba(34, 197, 94, 0.06) 60%,
+    rgba(139, 92, 246, 0.06) 40%,
+    rgba(139, 92, 246, 0.12) 50%,
+    rgba(139, 92, 246, 0.06) 60%,
     transparent 100%
   );
   background-size: 200% 100%;
@@ -231,8 +231,8 @@ body {
   animation: gradient-shift 4s ease infinite;
 }
 
-.gradient-text-green {
-  background: linear-gradient(135deg, #22c55e, #10b981, #22c55e);
+.gradient-text-purple {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed, #8b5cf6);
   background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -263,11 +263,11 @@ body {
   transform: scale(1.05);
 }
 
-.btn-glow-green {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2);
+.btn-glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.2);
 }
-.btn-glow-green:hover {
-  box-shadow: 0 0 40px rgba(34, 197, 94, 0.35);
+.btn-glow-purple:hover {
+  box-shadow: 0 0 40px rgba(139, 92, 246, 0.35);
 }
 
 /* ─── Platform Badge Hover ────────────────────────────────── */
@@ -298,8 +298,8 @@ body {
 
 .overflow-y-auto::-webkit-scrollbar { width: 4px; }
 .overflow-y-auto::-webkit-scrollbar-track { background: transparent; }
-.overflow-y-auto::-webkit-scrollbar-thumb { background: rgba(34, 197, 94, 0.2); border-radius: 4px; }
-.overflow-y-auto::-webkit-scrollbar-thumb:hover { background: rgba(34, 197, 94, 0.4); }
+.overflow-y-auto::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.2); border-radius: 4px; }
+.overflow-y-auto::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.4); }
 
 /* ─── Existing kept animations ────────────────────────────── */
 
@@ -325,8 +325,8 @@ body {
 
 .aviator-grid-bg {
   background-image:
-    linear-gradient(rgba(34, 197, 94, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34, 197, 94, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -348,7 +348,7 @@ body {
   100% { background-position: 200% center; }
 }
 .win-sweep {
-  background: linear-gradient(90deg, transparent 0%, rgba(34, 197, 94, 0.12) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(139, 92, 246, 0.12) 50%, transparent 100%);
   background-size: 200% 100%;
   animation: win-sweep 2.5s ease-in-out infinite;
 }
@@ -383,7 +383,7 @@ body {
 /* ─── Signal row hover highlight ──────────────────────────── */
 
 @keyframes signal-flash {
-  0% { background-color: rgba(34, 197, 94, 0.08); }
+  0% { background-color: rgba(139, 92, 246, 0.08); }
   100% { background-color: transparent; }
 }
 
@@ -391,7 +391,7 @@ body {
   transition: background-color 0.3s ease;
 }
 .signal-row:hover {
-  background-color: rgba(34, 197, 94, 0.05);
+  background-color: rgba(139, 92, 246, 0.05);
 }
 
 /* ─── Nav link underline grow ─────────────────────────────── */
@@ -407,7 +407,7 @@ body {
   width: 0;
   height: 2px;
   border-radius: 1px;
-  background: linear-gradient(90deg, #22c55e, #10b981);
+  background: linear-gradient(90deg, #8b5cf6, #7c3aed);
   transition: all 0.3s ease;
   transform: translateX(-50%);
 }
@@ -415,12 +415,12 @@ body {
   width: 80%;
 }
 .nav-link:hover {
-  color: #22c55e;
+  color: #8b5cf6;
 }
 
 /* ─── Divider glow ────────────────────────────────────────── */
 
 .divider-glow {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
 }

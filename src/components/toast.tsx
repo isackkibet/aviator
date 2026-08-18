@@ -15,7 +15,7 @@ export default function Toast({ message, type, onClose }: ToastProps) {
   }, [onClose])
 
   const colors = {
-    success: 'from-[#22c55e] to-green-700 border-[#22c55e]',
+    success: 'from-[#8b5cf6] to-violet-700 border-[#8b5cf6]',
     error: 'from-red-600 to-red-800 border-red-500',
     info: 'from-gray-700 to-gray-800 border-gray-500',
   }

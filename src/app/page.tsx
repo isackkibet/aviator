@@ -9,7 +9,7 @@ export default function Home() {
         {/* Gradient mesh background */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] rounded-full bg-red-500/8 blur-[120px] mesh-orb-1" />
-          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#22c55e]/8 blur-[120px] mesh-orb-2" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#8b5cf6]/8 blur-[120px] mesh-orb-2" />
           <div className="absolute top-[30%] left-[50%] w-[400px] h-[400px] rounded-full bg-red-400/5 blur-[100px] mesh-orb-3" />
         </div>
         {/* Grid overlay */}
@@ -20,26 +20,26 @@ export default function Home() {
           <div className="plane absolute left-10 top-20 w-24 h-auto" style={{ animationDelay: '1s' }} />
 
           {/* Badge */}
-          <div className="fade-up fade-up-1 inline-flex items-center gap-2 px-5 py-2 rounded-full border border-[#22c55e]/30 bg-[#22c55e]/10 mb-8">
-            <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-            <span className="text-sm font-bold text-[#22c55e]">LIVE NOW — 95.2% ACCURACY</span>
+          <div className="fade-up fade-up-1 inline-flex items-center gap-2 px-5 py-2 rounded-full border border-[#8b5cf6]/30 bg-[#8b5cf6]/10 mb-8">
+            <span className="w-2 h-2 rounded-full bg-[#8b5cf6] animate-pulse" />
+            <span className="text-sm font-bold text-[#8b5cf6]">LIVE NOW — 95.2% ACCURACY</span>
           </div>
 
           <h1 className="fade-up fade-up-2 text-7xl md:text-8xl font-black mb-6">
             <span className="gradient-text-red">
               AVIATOR
             </span>
-            <span className="block text-4xl font-normal text-[#22c55e] multiplier-glow mt-2">SIGNALS</span>
+            <span className="block text-4xl font-normal text-[#8b5cf6] multiplier-glow mt-2">SIGNALS</span>
           </h1>
 
-          <p className="fade-up fade-up-3 text-3xl md:text-4xl mb-6 text-[#22c55e] font-semibold pulse">
+          <p className="fade-up fade-up-3 text-3xl md:text-4xl mb-6 text-[#8b5cf6] font-semibold pulse">
             95.2% WIN RATE &bull; LIVE CRASH PREDICTIONS
           </p>
 
           <p className="fade-up fade-up-4 text-xl mb-12 max-w-2xl mx-auto text-gray-400">
             Get instant cashout signals for{' '}
             <span className="font-black text-white">Betika, Pepeta, Odibet, Melbet</span>{' '}
-            and every Aviator game. Start from <span className="text-[#22c55e] font-bold">KSH 100</span>!
+            and every Aviator game. Start from <span className="text-[#8b5cf6] font-bold">KSH 100</span>!
           </p>
 
           {/* CTA Buttons */}
@@ -47,7 +47,7 @@ export default function Home() {
             <Link href="/packages" className="btn-glow bg-gradient-to-r from-red-600 to-red-700 text-white text-xl font-black px-14 py-5 rounded-2xl border border-red-500/30 shadow-2xl shadow-red-900/40">
               BUY SIGNALS NOW
             </Link>
-            <Link href="/dashboard" className="btn-glow btn-glow-green bg-[#111827] text-[#22c55e] text-xl font-bold px-14 py-5 rounded-2xl border-2 border-[#22c55e]/40">
+            <Link href="/dashboard" className="btn-glow btn-glow-purple bg-[#111827] text-[#8b5cf6] text-xl font-bold px-14 py-5 rounded-2xl border-2 border-[#8b5cf6]/40">
               LIVE DASHBOARD
             </Link>
           </div>
@@ -61,9 +61,9 @@ export default function Home() {
               { value: '15s AVG', label: 'Signal Delay', variant: 'red' },
             ].map((s, i) => {
               const cardClass = s.variant === 'green'
-                ? 'card-glow border-[#22c55e]/15 bg-[#0d1320]'
+                ? 'card-glow border-[#8b5cf6]/15 bg-[#0d1320]'
                 : 'card-glow card-glow-red border-red-500/15 bg-[#0d1320]'
-              const textClass = s.variant === 'green' ? 'text-[#22c55e]' : 'text-red-400'
+              const textClass = s.variant === 'green' ? 'text-[#8b5cf6]' : 'text-red-400'
               const content = (
                 <div className={`glass p-6 rounded-2xl border ${cardClass} shimmer${s.variant === 'red' ? '-red' : ''} text-center`}>
                   <span className={`text-3xl font-black block ${textClass}`}>{s.value}</span>
@@ -86,7 +86,7 @@ export default function Home() {
       {/* ── How It Works ── */}
       <section className="py-24 px-4 bg-[#0a0e17] relative">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-5xl font-black text-center mb-6 gradient-text-green">
+          <h2 className="text-5xl font-black text-center mb-6 gradient-text-purple">
             HOW IT WORKS
           </h2>
           <p className="text-gray-400 text-center mb-16 text-lg">Three simple steps to start winning</p>
@@ -97,9 +97,9 @@ export default function Home() {
               { step: '02', title: 'Get Signals', desc: 'Receive live Aviator crash predictions before each round starts.', color: 'red' },
               { step: '03', title: 'Cash Out Big', desc: 'Place bets using our signals and cash out before the crash.', color: 'green' },
             ].map((s, i) => (
-              <div key={i} className={`fade-up fade-up-${i + 1} card-glow${s.color === 'red' ? ' card-glow-red' : ''} glass rounded-2xl p-8 border ${s.color === 'green' ? 'border-[#22c55e]/15' : 'border-red-500/15'}`}>
-                <div className={`text-5xl font-black mb-4 ${s.color === 'green' ? 'text-[#22c55e]/20' : 'text-red-400/20'}`}>{s.step}</div>
-                <h3 className={`text-xl font-black mb-3 ${s.color === 'green' ? 'text-[#22c55e]' : 'text-red-400'}`}>{s.title}</h3>
+              <div key={i} className={`fade-up fade-up-${i + 1} card-glow${s.color === 'red' ? ' card-glow-red' : ''} glass rounded-2xl p-8 border ${s.color === 'green' ? 'border-[#8b5cf6]/15' : 'border-red-500/15'}`}>
+                <div className={`text-5xl font-black mb-4 ${s.color === 'green' ? 'text-[#8b5cf6]/20' : 'text-red-400/20'}`}>{s.step}</div>
+                <h3 className={`text-xl font-black mb-3 ${s.color === 'green' ? 'text-[#8b5cf6]' : 'text-red-400'}`}>{s.title}</h3>
                 <p className="text-gray-400 text-sm leading-relaxed">{s.desc}</p>
               </div>
             ))}
@@ -113,7 +113,7 @@ export default function Home() {
       {/* ── Platforms Section ── */}
       <section className="py-24 px-4 bg-[#0a0e17]">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl font-black text-center mb-6 gradient-text-green">
+          <h2 className="text-5xl font-black text-center mb-6 gradient-text-purple">
             PROVEN ON ALL PLATFORMS
           </h2>
           <p className="text-gray-400 text-center mb-16 text-lg">Works on every major betting platform</p>
@@ -121,15 +121,15 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 items-center justify-items-center">
             {[
               { name: 'BETIKA', color: 'red', glow: 'hover:shadow-red-500/20' },
-              { name: 'PEPETA', color: 'green', glow: 'hover:shadow-[#22c55e]/20' },
+              { name: 'PEPETA', color: 'green', glow: 'hover:shadow-[#8b5cf6]/20' },
               { name: 'ODIBET', color: 'red', glow: 'hover:shadow-red-500/20' },
-              { name: 'MELBET', color: 'green', glow: 'hover:shadow-[#22c55e]/20' },
+              { name: 'MELBET', color: 'green', glow: 'hover:shadow-[#8b5cf6]/20' },
               { name: '1XBET', color: 'red', glow: 'hover:shadow-red-500/20' },
-              { name: 'ALL SITES', color: 'green', glow: 'hover:shadow-[#22c55e]/20' },
+              { name: 'ALL SITES', color: 'green', glow: 'hover:shadow-[#8b5cf6]/20' },
             ].map((p, i) => {
-              const textColor = p.color === 'red' ? 'text-red-400' : 'text-[#22c55e]'
-              const borderColor = p.color === 'red' ? 'border-red-500/20' : 'border-[#22c55e]/20'
-              const afterColor = p.color === 'red' ? 'bg-red-400' : 'bg-[#22c55e]'
+              const textColor = p.color === 'red' ? 'text-red-400' : 'text-[#8b5cf6]'
+              const borderColor = p.color === 'red' ? 'border-red-500/20' : 'border-[#8b5cf6]/20'
+              const afterColor = p.color === 'red' ? 'bg-red-400' : 'bg-[#8b5cf6]'
               return (
                 <div
                   key={p.name}
@@ -150,7 +150,7 @@ export default function Home() {
       {/* ── Testimonials / Trust ── */}
       <section className="py-24 px-4 bg-[#0a0e17]">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-5xl font-black text-center mb-6 gradient-text-green">
+          <h2 className="text-5xl font-black text-center mb-6 gradient-text-purple">
             TRUSTED BY THOUSANDS
           </h2>
           <p className="text-gray-400 text-center mb-16 text-lg">Real results from real users in Kenya</p>
@@ -161,14 +161,14 @@ export default function Home() {
               { name: 'Wanjiku M.', text: 'Best prediction app I have used. The accuracy is insane. Keep it up!', amount: '+42,800', color: 'green' },
               { name: 'Hassan A.', text: 'VIP package is worth every coin. Signals are fast and accurate. Recommended.', amount: '+8,900', color: 'green' },
             ].map((t, i) => (
-              <div key={i} className={`fade-up fade-up-${i + 1} card-glow glass rounded-2xl p-6 border border-[#22c55e]/10`}>
+              <div key={i} className={`fade-up fade-up-${i + 1} card-glow glass rounded-2xl p-6 border border-[#8b5cf6]/10`}>
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#22c55e] to-green-700 flex items-center justify-center text-black font-black text-sm">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b5cf6] to-violet-700 flex items-center justify-center text-black font-black text-sm">
                     {t.name.split(' ').map(w => w[0]).join('')}
                   </div>
                   <div>
                     <div className="font-bold text-white text-sm">{t.name}</div>
-                    <div className="text-[#22c55e] font-black text-xs">{t.amount} KSH</div>
+                    <div className="text-[#8b5cf6] font-black text-xs">{t.amount} KSH</div>
                   </div>
                 </div>
                 <p className="text-gray-400 text-sm leading-relaxed">{t.text}</p>

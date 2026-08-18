@@ -69,7 +69,7 @@ function ClientPaymentSuccess() {
 
   const statusColor =
     paymentStatus === 'paid'
-      ? 'from-green-400 to-green-600'
+      ? 'from-violet-400 to-violet-600'
       : paymentStatus === 'failed'
         ? 'from-red-400 to-red-600'
         : 'from-yellow-400 to-orange-500'
@@ -85,7 +85,7 @@ function ClientPaymentSuccess() {
 
   return (
     <div className="min-h-screen py-24 px-4 bg-[#0a0e17] aviator-grid-bg flex items-center justify-center">
-      <div className="max-w-2xl mx-auto text-center glass p-12 rounded-3xl shadow-2xl border border-[#22c55e]/30">
+      <div className="max-w-2xl mx-auto text-center glass p-12 rounded-3xl shadow-2xl border border-[#8b5cf6]/30">
         <div className={`w-32 h-32 bg-gradient-to-r ${statusColor} rounded-full mx-auto mb-8 flex items-center justify-center shadow-xl`}>
           {paymentStatus === 'paid' ? (
             <svg className="w-20 h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,29 +100,29 @@ function ClientPaymentSuccess() {
           )}
         </div>
 
-        <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-[#22c55e] to-green-500 bg-clip-text text-transparent">
+        <h1 className="text-5xl font-black mb-4 bg-gradient-to-r from-[#8b5cf6] to-violet-500 bg-clip-text text-transparent">
           {statusMessage}
         </h1>
 
         <div className="space-y-4 mb-8 text-xl text-gray-300">
           <p>
-            <span className="font-mono text-green-400">✓</span> {packageName} package
+            <span className="font-mono text-violet-400">✓</span> {packageName} package
           </p>
           <p>
-            <span className="font-mono text-green-400">✓</span> KSH {amount} to {phone}
+            <span className="font-mono text-violet-400">✓</span> KSH {amount} to {phone}
           </p>
           {transactionId && (
             <p>
-              <span className="font-mono text-green-400">✓</span> Ref:{' '}
-              <code className="bg-black/30 px-2 py-1 rounded text-green-400">{transactionId}</code>
+              <span className="font-mono text-violet-400">✓</span> Ref:{' '}
+              <code className="bg-black/30 px-2 py-1 rounded text-violet-400">{transactionId}</code>
             </p>
           )}
         </div>
 
         {paymentStatus === 'paid' && (
-          <div className="glass p-8 rounded-2xl border border-green-500/30 mb-8">
-            <p className="text-2xl font-bold text-[#22c55e] mb-2">Aviator Signals Ready!</p>
-            <p className="text-lg text-green-300">
+          <div className="glass p-8 rounded-2xl border border-violet-500/30 mb-8">
+            <p className="text-2xl font-bold text-[#8b5cf6] mb-2">Aviator Signals Ready!</p>
+            <p className="text-lg text-violet-300">
               Redirecting to dashboard in <span className="text-2xl font-black text-yellow-400">{countdown}</span>s
             </p>
           </div>
@@ -131,7 +131,7 @@ function ClientPaymentSuccess() {
         {paymentStatus === 'paid' ? (
           <button
             onClick={() => router.push('/dashboard')}
-            className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white px-12 py-4 rounded-2xl font-black text-xl shadow-2xl transition-all transform hover:scale-105 border border-green-500/50"
+            className="bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-500 hover:to-violet-600 text-white px-12 py-4 rounded-2xl font-black text-xl shadow-2xl transition-all transform hover:scale-105 border border-violet-500/50"
           >
             Go to Dashboard →
           </button>

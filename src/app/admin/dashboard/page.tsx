@@ -80,7 +80,7 @@ export default function AdminDashboard() {
   }
 
   const cards = [
-    { label: 'Total Payments', value: stats?.totalPayments || 0, color: 'text-[#22c55e]' },
+    { label: 'Total Payments', value: stats?.totalPayments || 0, color: 'text-[#8b5cf6]' },
     { label: 'Total Revenue', value: `KSH ${(stats?.totalRevenue || 0).toLocaleString()}`, color: 'text-yellow-400' },
     { label: 'Today Payments', value: stats?.todayPayments || 0, color: 'text-blue-400' },
     { label: 'Revenue Today', value: `KSH ${(stats?.revenueToday || 0).toLocaleString()}`, color: 'text-green-400' },
@@ -109,13 +109,13 @@ export default function AdminDashboard() {
                   {settings.signals_running ? 'Signals are running — users see live data' : 'Signals stopped — users see paused state'}
                 </p>
               </div>
-              <div className={`w-14 h-8 rounded-full flex items-center transition-all cursor-pointer ${settings.signals_running ? 'bg-[#22c55e]' : 'bg-gray-600'}`}
+              <div className={`w-14 h-8 rounded-full flex items-center transition-all cursor-pointer ${settings.signals_running ? 'bg-[#8b5cf6]' : 'bg-gray-600'}`}
                 onClick={toggleSignals}
               >
                 <div className={`w-6 h-6 rounded-full bg-white shadow-lg transition-transform ${settings.signals_running ? 'translate-x-7' : 'translate-x-1'}`} />
               </div>
             </div>
-            <div className={`px-4 py-2 rounded-xl text-sm font-bold text-center ${settings.signals_running ? 'bg-[#22c55e]/20 text-[#22c55e] border border-[#22c55e]/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
+            <div className={`px-4 py-2 rounded-xl text-sm font-bold text-center ${settings.signals_running ? 'bg-[#8b5cf6]/20 text-[#8b5cf6] border border-[#8b5cf6]/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
               {settings.signals_running ? 'RUNNING' : 'STOPPED'}
             </div>
           </div>
@@ -129,14 +129,14 @@ export default function AdminDashboard() {
                 type="number"
                 value={multiplierInput}
                 onChange={(e) => setMultiplierInput(e.target.value)}
-                className="flex-1 bg-black/50 border border-gray-700/50 rounded-xl px-4 py-3 text-white text-2xl font-black text-center outline-none focus:border-[#22c55e]/50"
+                className="flex-1 bg-black/50 border border-gray-700/50 rounded-xl px-4 py-3 text-white text-2xl font-black text-center outline-none focus:border-[#8b5cf6]/50"
                 min={1}
                 max={10000}
               />
               <button
                 onClick={saveMultiplier}
                 disabled={savingMultiplier || multiplierInput === String(settings.max_multiplier)}
-                className="bg-gradient-to-r from-[#22c55e] to-green-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-all disabled:opacity-50"
+                className="bg-gradient-to-r from-[#8b5cf6] to-violet-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-all disabled:opacity-50"
               >
                 {savingMultiplier ? '...' : 'Save'}
               </button>
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
                 <button
                   key={v}
                   onClick={() => { setMultiplierInput(String(v)); }}
-                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${Number(multiplierInput) === v ? 'bg-[#22c55e] text-black' : 'bg-white/10 text-gray-400 hover:bg-white/20'}`}
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${Number(multiplierInput) === v ? 'bg-[#8b5cf6] text-black' : 'bg-white/10 text-gray-400 hover:bg-white/20'}`}
                 >
                   {v}x
                 </button>
@@ -177,7 +177,7 @@ export default function AdminDashboard() {
         <div className="flex flex-wrap gap-4">
           <a
             href="/admin/payments"
-            className="bg-gradient-to-r from-[#22c55e] to-green-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-all"
+            className="bg-gradient-to-r from-[#8b5cf6] to-violet-600 text-white px-6 py-3 rounded-xl font-bold hover:opacity-90 transition-all"
           >
             Manage Payments
           </a>

@@ -72,7 +72,7 @@ export default function AdminPayments() {
 
   const statusColors: Record<string, string> = {
     pending: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30',
-    paid: 'text-[#22c55e] bg-[#22c55e]/10 border-[#22c55e]/30',
+    paid: 'text-[#8b5cf6] bg-[#8b5cf6]/10 border-[#8b5cf6]/30',
     failed: 'text-red-400 bg-red-400/10 border-red-400/30',
     cancelled: 'text-gray-400 bg-gray-400/10 border-gray-400/30',
   }
@@ -96,12 +96,12 @@ export default function AdminPayments() {
                 value={phoneSearch}
                 onChange={(e) => setPhoneSearch(e.target.value)}
                 placeholder="0712..."
-                className="bg-black/30 border border-gray-700/50 rounded-xl px-4 py-2 text-white placeholder:text-gray-500 outline-none focus:border-[#22c55e]"
+                className="bg-black/30 border border-gray-700/50 rounded-xl px-4 py-2 text-white placeholder:text-gray-500 outline-none focus:border-[#8b5cf6]"
               />
             </div>
             <button
               type="submit"
-              className="bg-[#22c55e] text-black px-5 py-2 rounded-xl font-bold hover:bg-[#22c55e]/90"
+              className="bg-[#8b5cf6] text-black px-5 py-2 rounded-xl font-bold hover:bg-[#8b5cf6]/90"
             >
               Search
             </button>
@@ -112,7 +112,7 @@ export default function AdminPayments() {
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }}
-              className="bg-black/30 border border-gray-700/50 rounded-xl px-4 py-2 text-white outline-none focus:border-[#22c55e]"
+              className="bg-black/30 border border-gray-700/50 rounded-xl px-4 py-2 text-white outline-none focus:border-[#8b5cf6]"
             >
               <option value="all">All</option>
               <option value="pending">Pending</option>
@@ -162,7 +162,7 @@ export default function AdminPayments() {
                           <button
                             onClick={() => updateStatus(p.id, 'paid')}
                             disabled={updating === p.id}
-                            className="bg-[#22c55e]/20 text-[#22c55e] px-3 py-1 rounded-lg text-xs font-bold hover:bg-[#22c55e]/30 disabled:opacity-50 border border-[#22c55e]/30"
+                            className="bg-[#8b5cf6]/20 text-[#8b5cf6] px-3 py-1 rounded-lg text-xs font-bold hover:bg-[#8b5cf6]/30 disabled:opacity-50 border border-[#8b5cf6]/30"
                           >
                             Approve
                           </button>

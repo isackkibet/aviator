@@ -42,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     return (
       <div className="min-h-screen bg-[#0a0e17] flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-2 border-[#22c55e] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-2 border-[#8b5cf6] border-t-transparent rounded-full animate-spin" />
           <div className="text-sm text-gray-400 font-bold">Loading...</div>
         </div>
       </div>
@@ -59,11 +59,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-[#0a0e17]">
       <div className="flex">
-        <aside className="w-64 min-h-screen glass-strong border-r border-[#22c55e]/10 p-6 hidden lg:block">
+        <aside className="w-64 min-h-screen glass-strong border-r border-[#8b5cf6]/10 p-6 hidden lg:block">
           <div className="mb-8">
             <Link href="/admin/dashboard">
               <div className="flex items-center gap-3 group">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#22c55e] to-green-700 flex items-center justify-center text-black font-black text-sm transition-all duration-300 group-hover:shadow-lg group-hover:shadow-[#22c55e]/30">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#8b5cf6] to-violet-700 flex items-center justify-center text-black font-black text-sm transition-all duration-300 group-hover:shadow-lg group-hover:shadow-[#8b5cf6]/30">
                   A
                 </div>
                 <div>
@@ -84,7 +84,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   <div
                     className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all duration-300 ${
                       active
-                        ? 'bg-[#22c55e]/15 text-[#22c55e] border border-[#22c55e]/25 shadow-lg shadow-[#22c55e]/5'
+                        ? 'bg-[#8b5cf6]/15 text-[#8b5cf6] border border-[#8b5cf6]/25 shadow-lg shadow-[#8b5cf6]/5'
                         : 'text-gray-400 hover:text-white hover:bg-white/5 border border-transparent'
                     }`}
                   >
@@ -93,7 +93,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </svg>
                     <span>{item.label}</span>
                     {active && (
-                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+                      <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-pulse" />
                     )}
                   </div>
                 </Link>
@@ -128,14 +128,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </div>
 
       {/* Mobile nav */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 glass-strong border-t border-[#22c55e]/10 p-4 z-50">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 glass-strong border-t border-[#8b5cf6]/10 p-4 z-50">
         <div className="flex justify-around">
           {navItems.map((item) => {
             const active = pathname === item.href
             return (
               <Link key={item.href} href={item.href}>
                 <div className={`flex flex-col items-center gap-1 px-4 py-2 rounded-xl font-bold transition-all duration-300 ${
-                  active ? 'text-[#22c55e]' : 'text-gray-400'
+                  active ? 'text-[#8b5cf6]' : 'text-gray-400'
                 }`}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.iconPath} />
