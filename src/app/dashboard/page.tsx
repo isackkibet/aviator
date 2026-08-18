@@ -586,10 +586,16 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* ── Main Area: Graph + Bet Panels ── */}
+        {/* ── Main Area: Bet Panels + Graph ── */}
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-4 mb-4">
 
-          {/* ── Graph (3 cols) ── */}
+          {/* ── Bet Panels (1 col, left) ── */}
+          <div className="space-y-3">
+            <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
+            <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
+          </div>
+
+          {/* ── Graph (3 cols, right) ── */}
           <div className="xl:col-span-3">
             <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${
               crashed ? 'border-red-500/40' : isMega ? 'border-yellow-400/40' : 'border-[#8b5cf6]/20'
@@ -628,12 +634,6 @@ export default function Dashboard() {
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* ── Bet Panels (1 col) ── */}
-          <div className="space-y-3">
-            <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
-            <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
           </div>
         </div>
 
