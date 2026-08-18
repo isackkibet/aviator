@@ -29,18 +29,16 @@ export default function AdminDashboard() {
   useEffect(() => {
     fetch('/api/admin/verify')
       .then((r) => r.json())
-      .then((data) => {
+      .then(async (data) => {
         if (!data.authenticated) {
           router.push('/admin/login')
           return
         }
         setAdmin(data.admin)
-        return Promise.all([
-          fetch('/api/admin/stats').then((r) => r?.json()),
-          fetch('/api/admin/settings').then((r) => r?.json()),
+        const [statsData, settingsData] = await Promise.all([
+          fetch('/api/admin/stats').then((r) => r.json()),
+          fetch('/api/admin/settings').then((r) => r.json()),
         ])
-      })
-      .then(([statsData, settingsData]) => {
         if (statsData) setStats(statsData)
         if (settingsData) {
           setSettings(settingsData)
