@@ -9,7 +9,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/betika-logo.jpg" alt="Betika" className="h-10 w-auto rounded" />
+              <img src="/betika-logo.jpg" alt="Betika" className="h-10 w-10 rounded-full object-cover border-2 border-[#22c55e]" />
             </Link>
             <Link href="/" className="text-2xl font-bold text-red-400">
               <span className="text-[#22c55e]">Aviator</span> Signals
