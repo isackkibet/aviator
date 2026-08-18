@@ -508,61 +508,61 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* ── Main Grid ── */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        {/* ── Main Content ── */}
+        <div className="space-y-6">
 
-          {/* ── Left: Graph + Multiplier ── */}
-          <div className="xl:col-span-2 space-y-6">
-
-            {/* Graph card */}
-            <div className={`fade-up fade-up-2 rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${borderColor}`}>
+          {/* ── Live Game Card (full width) ── */}
+          <div className={`fade-up fade-up-2 rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${borderColor}`}>
               {/* Top bar */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
-                <div className="flex items-center gap-2">
-                  <span className={`w-2 h-2 rounded-full ${crashed ? 'bg-red-400' : 'bg-[#22c55e] animate-pulse'}`} />
-                  <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">
-                    {crashed ? 'CRASHED' : 'LIVE'}
+              <div className="flex items-center justify-between px-6 py-3 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                  <span className={`w-2.5 h-2.5 rounded-full ${crashed ? 'bg-red-400' : 'bg-[#22c55e] animate-pulse'}`} />
+                  <span className="text-sm font-bold text-gray-300 uppercase tracking-widest">
+                    {crashed ? 'CRASHED' : 'LIVE NOW'}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   {isMega && !crashed && (
-                    <span className="text-xs font-black bg-yellow-400 text-black px-2 py-0.5 rounded-full animate-bounce">MEGA</span>
+                    <span className="text-xs font-black bg-yellow-400 text-black px-3 py-1 rounded-full animate-bounce">MEGA</span>
                   )}
-                  <span className="text-xs text-gray-500">Round #{roundState.currentRoundIndex}</span>
+                  <span className="text-xs text-gray-500 font-mono">Round #{roundState.currentRoundIndex}</span>
                 </div>
               </div>
 
-              {/* Multiplier display */}
-              <div className="text-center pt-6 pb-2">
-                <div className={`text-7xl font-black tracking-tighter transition-colors duration-300 ${accentColor} ${crashed ? '' : 'multiplier-glow'}`}>
-                  {clampedLive.toFixed(2)}<span className="text-4xl font-bold opacity-70">x</span>
+              {/* Multiplier + Graph side by side */}
+              <div className="flex flex-col lg:flex-row items-stretch">
+                <div className="lg:w-64 flex flex-col items-center justify-center p-8 border-b lg:border-b-0 lg:border-r border-white/5">
+                  <div className={`text-8xl font-black tracking-tighter transition-colors duration-300 ${accentColor} ${crashed ? '' : 'multiplier-glow'}`}>
+                    {clampedLive.toFixed(2)}<span className="text-5xl font-bold opacity-60">x</span>
+                  </div>
+                  <p className={`text-sm font-bold mt-3 text-center ${crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-gray-400'}`}>
+                    {crashed
+                      ? `CRASHED AT ${Math.min(crashMultiplier, maxMultiplier).toFixed(2)}x`
+                      : isMega ? 'RARE MEGA ROUND' : 'CASH OUT BEFORE CRASH'}
+                  </p>
+                  {!crashed && (
+                    <p className="text-xs text-gray-500 mt-1 text-center">Next round in seconds</p>
+                  )}
                 </div>
-                <p className={`text-sm font-bold mt-1 ${crashed ? 'text-red-400' : isMega ? 'text-yellow-400' : 'text-gray-400'}`}>
-                  {crashed
-                    ? `CRASHED AT ${Math.min(crashMultiplier, maxMultiplier).toFixed(2)}x — NEXT ROUND STARTING`
-                    : isMega
-                      ? 'RARE MEGA ROUND — CASH OUT NOW!'
-                      : '⏰ CASH OUT BEFORE IT CRASHES'}
-                </p>
-              </div>
 
-              {/* SVG Graph */}
-              <div className="px-4 pb-4 h-[260px]">
-                <MultiplierGraph
-                  progress={graphProgress}
-                  crashed={crashed}
-                  crashMultiplier={Math.min(crashMultiplier, maxMultiplier)}
-                  liveMultiplier={clampedLive}
-                />
+                <div className="flex-1 px-4 py-4" style={{ minHeight: '340px' }}>
+                  <MultiplierGraph
+                    progress={graphProgress}
+                    crashed={crashed}
+                    crashMultiplier={Math.min(crashMultiplier, maxMultiplier)}
+                    liveMultiplier={clampedLive}
+                  />
+                </div>
               </div>
             </div>
 
-            {/* ── Stat cards ── */}
-            <div className="fade-up fade-up-3 grid grid-cols-3 gap-4">
+            {/* ── Stat cards (full width) ── */}
+            <div className="fade-up fade-up-3 grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
                 { label: 'Win Rate', value: '95.2%', icon: 'W', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20', glow: 'card-glow' },
                 { label: 'Signals Today', value: '247', icon: 'S', color: 'text-yellow-400', border: 'border-yellow-400/20', glow: 'card-glow card-glow-yellow' },
                 { label: 'Total Profit', value: '12.7M', icon: 'P', color: 'text-[#22c55e]', border: 'border-[#22c55e]/20', glow: 'card-glow' },
+                { label: 'Active Users', value: '1,847', icon: 'U', color: 'text-blue-400', border: 'border-blue-400/20', glow: 'card-glow' },
               ].map((s) => (
                 <div key={s.label} className={`bg-[#0d1320] rounded-xl border ${s.border} p-4 text-center ${s.glow} shimmer`}>
                   <div className="text-sm font-black text-gray-500 mb-1">{s.icon}</div>
@@ -572,7 +572,11 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* ── Signals list ── */}
+          {/* ── Below: Signals + Sidebar ── */}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            {/* ── Left: Signals list ── */}
+            <div className="xl:col-span-2 space-y-6">
             <div className="fade-up fade-up-4 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden">
               <div className="flex items-center justify-between px-5 py-3 border-b border-white/5">
                 <h3 className="font-black text-sm text-white uppercase tracking-widest">Live Signals</h3>
@@ -735,6 +739,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   )
 }
