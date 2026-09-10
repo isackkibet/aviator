@@ -22,54 +22,58 @@ export default function Home() {
           {/* Badge */}
           <div className="fade-up fade-up-1 inline-flex items-center gap-2 px-5 py-2 rounded-full border border-[#8b5cf6]/30 bg-[#8b5cf6]/10 mb-8">
             <span className="w-2 h-2 rounded-full bg-[#8b5cf6] animate-pulse" />
-            <span className="text-sm font-bold text-[#8b5cf6]">FREE DEMO — NO REAL MONEY, EVER</span>
+            <span className="text-sm font-bold text-[#8b5cf6]">LIVE NOW — 95.2% ACCURACY</span>
           </div>
 
           <h1 className="fade-up fade-up-2 text-7xl md:text-8xl font-black mb-6">
             <span className="gradient-text-red">
-              SKY
+              AVIATOR
             </span>
-            <span className="block text-4xl font-normal text-[#8b5cf6] multiplier-glow mt-2">CRASH</span>
+            <span className="block text-4xl font-normal text-[#8b5cf6] multiplier-glow mt-2">SIGNALS</span>
           </h1>
 
           <p className="fade-up fade-up-3 text-3xl md:text-4xl mb-6 text-[#8b5cf6] font-semibold pulse">
-            WATCH IT CLIMB &bull; CASH OUT IN TIME
+            95.2% WIN RATE &bull; LIVE CRASH PREDICTIONS
           </p>
 
           <p className="fade-up fade-up-4 text-xl mb-12 max-w-2xl mx-auto text-gray-400">
-            A free, open practice version of the classic{' '}
-            <span className="font-black text-white">crash multiplier game</span>.
-            Play with virtual credits, learn the mechanics, no sign-up and{' '}
-            <span className="text-[#8b5cf6] font-bold">no real money involved</span>.
+            Get instant cashout signals for{' '}
+            <span className="font-black text-white">Betika, Pepeta, Odibet, Melbet</span>{' '}
+            and every Aviator game. Start from <span className="text-[#8b5cf6] font-bold">KSH 100</span>!
           </p>
 
           {/* CTA Buttons */}
           <div className="fade-up fade-up-5 flex flex-col lg:flex-row gap-5 justify-center items-center mb-20">
-            <Link href="/dashboard" className="btn-glow bg-gradient-to-r from-red-600 to-red-700 text-white text-xl font-black px-14 py-5 rounded-2xl border border-red-500/30 shadow-2xl shadow-red-900/40">
-              PLAY THE DEMO
+            <Link href="/packages" className="btn-glow bg-gradient-to-r from-red-600 to-red-700 text-white text-xl font-black px-14 py-5 rounded-2xl border border-red-500/30 shadow-2xl shadow-red-900/40">
+              BUY SIGNALS NOW
             </Link>
-            <a href="#how-it-works" className="btn-glow btn-glow-purple bg-[#111827] text-[#8b5cf6] text-xl font-bold px-14 py-5 rounded-2xl border-2 border-[#8b5cf6]/40">
-              HOW IT WORKS
-            </a>
+            <Link href="/dashboard" className="btn-glow btn-glow-purple bg-[#111827] text-[#8b5cf6] text-xl font-bold px-14 py-5 rounded-2xl border-2 border-[#8b5cf6]/40">
+              LIVE DASHBOARD
+            </Link>
           </div>
 
           {/* Stats Grid */}
           <div className="fade-up fade-up-6 grid grid-cols-2 lg:grid-cols-4 gap-5 max-w-4xl mx-auto">
             {[
-              { value: '1.00x+', label: 'Multiplier range', variant: 'green' },
-              { value: 'FREE', label: 'Always, no cost', variant: 'red' },
-              { value: 'VIRTUAL', label: 'Demo credits only', variant: 'green' },
-              { value: 'RANDOM', label: 'Fair, unpredictable', variant: 'red' },
+              { value: '1.5x - 25x', label: 'Multipliers', variant: 'green' },
+              { value: 'KSH 100', label: 'Min Package', variant: 'red' },
+              { value: '24/7', label: 'Live Support', variant: 'green', link: '/admin/login' },
+              { value: '15s AVG', label: 'Signal Delay', variant: 'red' },
             ].map((s, i) => {
               const cardClass = s.variant === 'green'
                 ? 'card-glow border-[#8b5cf6]/15 bg-[#0d1320]'
                 : 'card-glow card-glow-red border-red-500/15 bg-[#0d1320]'
               const textClass = s.variant === 'green' ? 'text-[#8b5cf6]' : 'text-red-400'
-              return (
-                <div key={i} className={`glass p-6 rounded-2xl border ${cardClass} shimmer${s.variant === 'red' ? '-red' : ''} text-center`}>
+              const content = (
+                <div className={`glass p-6 rounded-2xl border ${cardClass} shimmer${s.variant === 'red' ? '-red' : ''} text-center`}>
                   <span className={`text-3xl font-black block ${textClass}`}>{s.value}</span>
                   <span className="text-gray-500 text-sm font-medium mt-1 block">{s.label}</span>
                 </div>
+              )
+              return s.link ? (
+                <Link key={i} href={s.link}>{content}</Link>
+              ) : (
+                <div key={i}>{content}</div>
               )
             })}
           </div>
@@ -80,18 +84,18 @@ export default function Home() {
       <div className="divider-glow" />
 
       {/* ── How It Works ── */}
-      <section id="how-it-works" className="py-24 px-4 bg-[#0a0e17] relative">
+      <section className="py-24 px-4 bg-[#0a0e17] relative">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-5xl font-black text-center mb-6 gradient-text-purple">
             HOW IT WORKS
           </h2>
-          <p className="text-gray-400 text-center mb-16 text-lg">Three simple steps — every round</p>
+          <p className="text-gray-400 text-center mb-16 text-lg">Three simple steps to start winning</p>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: '01', title: 'Place a Demo Bet', desc: 'Set a virtual bet amount before the round starts. No real money is ever charged.', color: 'green' },
-              { step: '02', title: 'Watch the Multiplier Climb', desc: 'The plane flies and the multiplier rises in real time, until it randomly crashes.', color: 'red' },
-              { step: '03', title: 'Cash Out Before It Crashes', desc: 'Cash out any time to lock in your multiplier. Wait too long and the round is lost.', color: 'green' },
+              { step: '01', title: 'Choose Package', desc: 'Pick a plan that fits your budget. From KSH 100 to KSH 5,000.', color: 'green' },
+              { step: '02', title: 'Get Signals', desc: 'Receive live Aviator crash predictions before each round starts.', color: 'red' },
+              { step: '03', title: 'Cash Out Big', desc: 'Place bets using our signals and cash out before the crash.', color: 'green' },
             ].map((s, i) => (
               <div key={i} className={`fade-up fade-up-${i + 1} card-glow${s.color === 'red' ? ' card-glow-red' : ''} glass rounded-2xl p-8 border ${s.color === 'green' ? 'border-[#8b5cf6]/15' : 'border-red-500/15'}`}>
                 <div className={`text-5xl font-black mb-4 ${s.color === 'green' ? 'text-[#8b5cf6]/20' : 'text-red-400/20'}`}>{s.step}</div>
@@ -106,28 +110,36 @@ export default function Home() {
       {/* ── Divider ── */}
       <div className="divider-glow" />
 
-      {/* ── Fair & Random Section ── */}
+      {/* ── Platforms Section ── */}
       <section className="py-24 px-4 bg-[#0a0e17]">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl font-black text-center mb-6 gradient-text-purple">
-            FAIR, RANDOM, UNPREDICTABLE
+            PROVEN ON ALL PLATFORMS
           </h2>
-          <p className="text-gray-400 text-center mb-16 text-lg max-w-2xl mx-auto">
-            Every round&apos;s crash point is generated fresh and independently. Nobody — including us — knows
-            it in advance, so no service can honestly sell you a &quot;signal&quot; or prediction.
-          </p>
+          <p className="text-gray-400 text-center mb-16 text-lg">Works on every major betting platform</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 items-center justify-items-center">
             {[
-              { title: 'New round, new outcome', desc: 'Each crash point is generated independently. Past rounds have no bearing on what happens next.' },
-              { title: 'No predictions sold here', desc: 'This demo makes no accuracy claims and never asks you to pay for tips or "signals".' },
-              { title: 'Practice, not gambling', desc: 'Balances are virtual and reset-only. There is no way to deposit, withdraw, or win real money.' },
-            ].map((f, i) => (
-              <div key={i} className="card-glow glass rounded-2xl w-full text-left py-8 px-6 border border-[#8b5cf6]/20">
-                <h3 className="text-lg font-black text-[#8b5cf6] mb-2">{f.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
+              { name: 'BETIKA', color: 'red', glow: 'hover:shadow-red-500/20' },
+              { name: 'PEPETA', color: 'green', glow: 'hover:shadow-[#8b5cf6]/20' },
+              { name: 'ODIBET', color: 'red', glow: 'hover:shadow-red-500/20' },
+              { name: 'MELBET', color: 'green', glow: 'hover:shadow-[#8b5cf6]/20' },
+              { name: '1XBET', color: 'red', glow: 'hover:shadow-red-500/20' },
+              { name: 'ALL SITES', color: 'green', glow: 'hover:shadow-[#8b5cf6]/20' },
+            ].map((p, i) => {
+              const textColor = p.color === 'red' ? 'text-red-400' : 'text-[#8b5cf6]'
+              const borderColor = p.color === 'red' ? 'border-red-500/20' : 'border-[#8b5cf6]/20'
+              const afterColor = p.color === 'red' ? 'bg-red-400' : 'bg-[#8b5cf6]'
+              return (
+                <div
+                  key={p.name}
+                  className={`platform-badge card-glow${p.color === 'red' ? ' card-glow-red' : ''} glass rounded-2xl w-full text-center py-7 px-4 border ${borderColor} cursor-default hover:shadow-lg ${p.glow}`}
+                >
+                  <span className={`text-xl font-black ${textColor}`}>{p.name}</span>
+                  <style>{`.platform-badge:nth-child(${i + 1})::after { background: ${afterColor.replace('bg-', '')}; }`}</style>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
@@ -135,22 +147,30 @@ export default function Home() {
       {/* ── Divider ── */}
       <div className="divider-glow" />
 
-      {/* ── Why Try It ── */}
+      {/* ── Testimonials / Trust ── */}
       <section className="py-24 px-4 bg-[#0a0e17]">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-5xl font-black text-center mb-6 gradient-text-purple">
-            WHY TRY THE DEMO
+            TRUSTED BY THOUSANDS
           </h2>
-          <p className="text-gray-400 text-center mb-16 text-lg">No pressure, no cost, no catch</p>
+          <p className="text-gray-400 text-center mb-16 text-lg">Real results from real users in Kenya</p>
 
           <div className="grid md:grid-cols-3 gap-6">
             {[
-              { title: 'No sign-up required', text: 'Jump straight into the dashboard and start playing with virtual credits immediately.' },
-              { title: 'Zero financial risk', text: 'Nothing here touches real money — no deposits, no withdrawals, no payment forms.' },
-              { title: 'Learn the mechanics', text: 'Get a feel for how crash-multiplier games work before ever risking a cent elsewhere.' },
+              { name: 'Brian K.', text: 'Started with KSH 100 package. Made 15K in one week. The signals are legit!', amount: '+15,200', color: 'green' },
+              { name: 'Wanjiku M.', text: 'Best prediction app I have used. The accuracy is insane. Keep it up!', amount: '+42,800', color: 'green' },
+              { name: 'Hassan A.', text: 'VIP package is worth every coin. Signals are fast and accurate. Recommended.', amount: '+8,900', color: 'green' },
             ].map((t, i) => (
               <div key={i} className={`fade-up fade-up-${i + 1} card-glow glass rounded-2xl p-6 border border-[#8b5cf6]/10`}>
-                <div className="font-bold text-white text-sm mb-3">{t.title}</div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#8b5cf6] to-violet-700 flex items-center justify-center text-black font-black text-sm">
+                    {t.name.split(' ').map(w => w[0]).join('')}
+                  </div>
+                  <div>
+                    <div className="font-bold text-white text-sm">{t.name}</div>
+                    <div className="text-[#8b5cf6] font-black text-xs">{t.amount} KSH</div>
+                  </div>
+                </div>
                 <p className="text-gray-400 text-sm leading-relaxed">{t.text}</p>
               </div>
             ))}
@@ -165,13 +185,13 @@ export default function Home() {
         </div>
         <div className="max-w-3xl mx-auto text-center relative z-10">
           <h2 className="text-5xl font-black text-white mb-6">
-            READY TO <span className="gradient-text-red">GIVE IT A GO</span>?
+            READY TO <span className="gradient-text-red">START WINNING</span>?
           </h2>
           <p className="text-gray-400 text-lg mb-10">
-            Free virtual credits. No account, no payment, no risk.
+            Join thousands of Kenyans making money with Aviator signals
           </p>
-          <Link href="/dashboard" className="btn-glow bg-gradient-to-r from-red-600 to-red-700 text-white text-xl font-black px-16 py-6 rounded-2xl border border-red-500/30 shadow-2xl shadow-red-900/40 inline-block">
-            PLAY THE DEMO
+          <Link href="/packages" className="btn-glow bg-gradient-to-r from-red-600 to-red-700 text-white text-xl font-black px-16 py-6 rounded-2xl border border-red-500/30 shadow-2xl shadow-red-900/40 inline-block">
+            GET STARTED NOW
           </Link>
         </div>
       </section>

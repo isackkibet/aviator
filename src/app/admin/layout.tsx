@@ -6,6 +6,7 @@ import Link from 'next/link'
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', iconPath: 'M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zm0 8a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zm10 0a1 1 0 011-1h4a1 1 0 011 1v6a1 1 0 01-1 1h-4a1 1 0 01-1-1v-6z' },
+  { href: '/admin/payments', label: 'Payments', iconPath: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

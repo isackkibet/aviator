@@ -24,9 +24,13 @@ function corsHeaders(origin: string | null) {
 }
 
 // ─── Rate-limit config ───────────────────────────────────────────────────────
-// Admin settings writes: 10 requests per 60 seconds per IP
-const SETTINGS_LIMIT = 10
-const SETTINGS_WINDOW_MS = 60_000
+// Create-payment: 5 requests per 60 seconds per IP — stops payment spam/bots
+const PAYMENT_LIMIT = 5
+const PAYMENT_WINDOW_MS = 60_000
+
+// Verify-access: 30 requests per 60 seconds per IP
+const ACCESS_LIMIT = 30
+const ACCESS_WINDOW_MS = 60_000
 
 function getIp(req: NextRequest): string {
   const xff = req.headers.get('x-forwarded-for')
@@ -55,9 +59,9 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // ── Rate limit: admin settings writes ──
-  if (pathname === '/api/admin/settings') {
-    const result = rateLimit(`settings:${ip}`, SETTINGS_LIMIT, SETTINGS_WINDOW_MS)
+  // ── Rate limit: /api/create-payment ──
+  if (pathname === '/api/create-payment') {
+    const result = rateLimit(`pay:${ip}`, PAYMENT_LIMIT, PAYMENT_WINDOW_MS)
     if (!result.allowed) {
       const res = NextResponse.json(
         { error: 'Too many requests. Please wait a minute and try again.' },
@@ -66,6 +70,17 @@ export function proxy(request: NextRequest) {
       res.headers.set('Retry-After', String(Math.ceil((result.resetAt - Date.now()) / 1000)))
       Object.entries(corsHeaders(origin)).forEach(([k, v]) => res.headers.set(k, v))
       return res
+    }
+  }
+
+  // ── Rate limit: /api/verify-access ──
+  if (pathname === '/api/verify-access') {
+    const result = rateLimit(`access:${ip}`, ACCESS_LIMIT, ACCESS_WINDOW_MS)
+    if (!result.allowed) {
+      return NextResponse.json(
+        { error: 'Too many requests.' },
+        { status: 429 }
+      )
     }
   }
 
