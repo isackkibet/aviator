@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Logo from './logo'
 
 export default function Navbar() {
   const pathname = usePathname()
 
   const links = [
     { href: '/', label: 'Home' },
-    { href: '/packages', label: 'Packages' },
-    { href: '/dashboard', label: 'Dashboard' },
+    { href: '/dashboard', label: 'Play Demo' },
   ]
 
   return (
@@ -18,14 +18,10 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex items-center gap-2 sm:gap-3">
             <Link href="/" className="flex items-center gap-2 sm:gap-3 group">
-              <img
-                src="/betika-logo.jpg"
-                alt="Betika"
-                className="h-8 w-8 sm:h-10 sm:w-10 rounded-full object-cover border-2 border-[#8b5cf6] transition-all duration-300 group-hover:border-[#8b5cf6]/80 group-hover:shadow-lg group-hover:shadow-[#8b5cf6]/20"
-              />
+              <Logo size={36} />
               <span className="hidden sm:inline text-xl font-black tracking-tight">
-                <span className="text-[#8b5cf6] transition-colors">Aviator</span>
-                <span className="text-gray-400 font-bold ml-1">Signals</span>
+                <span className="text-[#8b5cf6] transition-colors">Sky</span>
+                <span className="text-gray-400 font-bold">Crash</span>
               </span>
             </Link>
           </div>

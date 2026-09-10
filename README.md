@@ -1,18 +1,19 @@
-# Aviator Signals
+# SkyCrash
 
-Next.js 16 platform for live Aviator crash-game signals. Users buy signal packages, pay via M-Pesa, and unlock betting access to an animated live dashboard with real-time crash predictions.
+A free, open-source practice version of the classic crash-multiplier game, built with Next.js 16.
+
+There is no real money anywhere in this app: no packages, no payments, no gated "signals." Every visitor
+gets virtual demo credits and can play immediately.
 
 ## Features
 
-- Landing page with hero, how-it-works, platforms, and testimonials sections
-- Live Aviator crash dashboard with animated multiplier graph, plane and crash effects
+- Landing page explaining how the game works and why crash points can't be predicted
+- Live crash dashboard with an animated multiplier graph, a proper biplane, and a crash sequence
 - Deterministic round and multiplier generation with rare "mega" crash rounds
-- Live multiplayer bet feed, top wins, and floating win popups
-- Gated betting access: signals unlock after purchasing a package
-- Package checkout (Basic, Pro, VIP) with phone number capture
-- Payment integration with create, verify, webhook, and success flows
-- Admin panel for managing settings, signals, and access
-- Neon/Postgres database with query caching
+- Virtual balance — demo bets are deducted and payouts are credited back, no real currency involved
+- Simulated activity feed (clearly labeled) for atmosphere only
+- Admin panel to start/stop the demo game and cap the max multiplier
+- Neon/Postgres database for admin auth and game settings, with query caching
 - API rate limiting
 - Tailwind CSS v4 styling
 
@@ -23,7 +24,6 @@ Next.js 16 platform for live Aviator crash-game signals. Users buy signal packag
 - TypeScript
 - Tailwind CSS v4
 - Neon (Postgres via @neondatabase/serverless)
-- M-Pesa payment integration
 - ESLint 9
 
 ## Getting Started
@@ -42,7 +42,7 @@ cp .env.example .env.local
 
 Required environment variables:
 - `DATABASE_URL` - Neon Postgres connection string
-- M-Pesa / payment credentials
+- `ADMIN_EMAIL` - the only email allowed to log into `/admin`
 
 3. Set up the database schema. The schema is available in `src/lib/neon-schema.sql`.
 
@@ -65,8 +65,7 @@ npm run dev
 
 ```
 src/
-  app/           App Router pages (home, dashboard, packages, payment, admin, api)
+  app/           App Router pages (home, dashboard, admin, api)
   components/    Reusable UI components
   lib/           Database, rate limiting, and utilities
-  types/         Shared TypeScript types
 ```

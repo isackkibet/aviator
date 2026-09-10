@@ -1,19 +1,6 @@
 -- Run this in your Neon SQL editor (Neon console -> SQL Editor)
 -- or: psql "$DATABASE_URL" -f src/lib/neon-schema.sql
 
-create table if not exists payments (
-  id uuid primary key default gen_random_uuid(),
-  phone text not null,
-  package_id text not null,
-  amount numeric not null,
-  status text not null default 'pending' check (status in ('pending','paid','failed','cancelled')),
-  created_at timestamptz not null default now(),
-  checkout_id text
-);
-
-create index if not exists payments_phone_status_idx
-  on payments (phone, status);
-
 -- Admin users table
 create table if not exists admins (
   id uuid primary key default gen_random_uuid(),
@@ -35,7 +22,7 @@ create table if not exists sessions (
 create index if not exists sessions_token_idx on sessions (token);
 create index if not exists sessions_admin_id_idx on sessions (admin_id);
 
--- Admin signal settings
+-- Demo game settings (controls the free practice dashboard)
 create table if not exists admin_settings (
   id uuid primary key default gen_random_uuid(),
   key text unique not null,
@@ -45,5 +32,5 @@ create table if not exists admin_settings (
 
 insert into admin_settings (key, value) values
   ('max_multiplier', '100'),
-  ('signals_running', 'false')
+  ('signals_running', 'true')
 on conflict (key) do nothing;

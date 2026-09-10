@@ -6,8 +6,8 @@ import Navbar from "@/components/navbar";
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: "Aviator Signals Kenya - Betika Pepeta Odibet Melbet Signals",
-  description: "95% accurate Aviator game crash predictions. Packages from KSH 100 for 10 minutes signals.",
+  title: "SkyCrash — Free Practice Crash Game",
+  description: "A free demo crash-multiplier game. Practice cashing out with virtual credits — no real money, no purchases, no predictions.",
 };
 
 export default function RootLayout({

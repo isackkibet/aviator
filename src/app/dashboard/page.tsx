@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
+import Logo from '@/components/logo'
 
 // ─── Data ───────────────────────────────────────────────────────────────────
 const names = ['Brian K.', 'Wanjiku M.', 'Hassan A.', 'Nancy O.', 'Kevin N.', 'Aisha B.', 'Dennis M.', 'Rose W.', 'Samuel K.', 'Mercy L.', 'Victor O.', 'Jane P.', 'Martin K.', 'Lucy W.', 'James M.', 'Faith N.', 'Eric S.', 'Catherine M.', 'Daniel K.', 'Ann W.', 'Patrick O.', 'Beatrice N.', 'Andrew M.', 'Gladys K.', 'John M.', 'Peter K.', 'Mary A.', 'Joseph W.', 'Sarah N.', 'David O.']
@@ -45,27 +46,6 @@ function computeLiveMultiplier(elapsed: number, crashMs: number, crashMultiplier
   return 1.01 + (crashMultiplier - 1.01) * Math.pow(progress, 0.82)
 }
 
-function generateSignals(count: number, currentRoundIndex: number, maxMul: number = 100) {
-  const signals = []
-  for (let i = count - 1; i >= 0; i--) {
-    const idx = currentRoundIndex - i - 1
-    if (idx < 0) continue
-    const info = getRoundInfo(idx)
-    const raw = info.crashMultiplier
-    const capped = raw > maxMul ? maxMul : raw
-    const winRand = mulberry32(idx + 999999)()
-    const status: 'live' | 'crashed' = winRand > 0.048 ? 'live' : 'crashed'
-    const time = new Date(idx * ROUND_MS + info.crashMs).toLocaleTimeString('en-US', { hour12: false })
-    signals.push({ multiplier: capped.toFixed(2) + 'x', time, status })
-  }
-  return signals
-}
-
-function maskPhone(phone: string) {
-  if (phone.length < 6) return phone
-  return `${phone.slice(0, 7)}***${phone.slice(-3)}`
-}
-
 function generateRoundHistory(count: number, seed: number) {
   const history = []
   const rand = mulberry32(seed)
@@ -81,6 +61,59 @@ function generateRoundHistory(count: number, seed: number) {
 
 // ─── SVG Graph ──────────────────────────────────────────────────────────────
 interface GraphPoint { x: number; y: number }
+
+// Detailed biplane silhouette, nose pointing up (-y), drawn in local coords.
+// Shared by the live-flight and crash-sequence renders so the same plane
+// that flies is the same plane that goes down.
+function PlaneShape({ scorched = false }: { scorched?: boolean }) {
+  const body = scorched ? '#7f1d1d' : '#ef4444'
+  const bodyDark = scorched ? '#450a0a' : '#7f1d1d'
+  const wing = scorched ? '#5c1a17' : '#dc2626'
+  const trim = scorched ? '#9ca3af' : '#fbbf24'
+  const stripe = scorched ? '#7f1d1d' : '#fca5a5'
+
+  return (
+    <>
+      {/* Ground/contact shadow */}
+      <ellipse cx="0" cy="3" rx="11" ry="3.2" fill="#000" opacity="0.22" />
+
+      {/* Tail fins (behind fuselage) */}
+      <path d="M -1,8.5 L -7.5,15.5 L -1,11 Z" fill={bodyDark} stroke={bodyDark} strokeWidth="0.5" />
+      <path d="M 1,9 L 2.2,15 L 1.6,10 Z" fill={wing} stroke={bodyDark} strokeWidth="0.4" />
+
+      {/* Lower wing (behind fuselage) */}
+      <path d="M -13,4 L -2,1.4 L 13,4 L 2,6.6 Z" fill={wing} stroke={bodyDark} strokeWidth="0.6" />
+      <line x1="-11" y1="3.6" x2="11" y2="3.6" stroke={bodyDark} strokeWidth="0.3" opacity="0.4" />
+      {/* wing struts connecting lower/upper wing */}
+      <line x1="-6.5" y1="4" x2="-6" y2="-3.4" stroke={bodyDark} strokeWidth="0.5" opacity="0.7" />
+      <line x1="6.5" y1="4" x2="6" y2="-3.4" stroke={bodyDark} strokeWidth="0.5" opacity="0.7" />
+
+      {/* Fuselage — tapered teardrop from nose to tail */}
+      <path
+        d="M 0,-17.5 C 2.6,-15.2 3.5,-9.5 3.1,-2.5 C 2.9,3.5 2.3,8.5 1.5,11 L -1.5,11 C -2.3,8.5 -2.9,3.5 -3.1,-2.5 C -3.5,-9.5 -2.6,-15.2 0,-17.5 Z"
+        fill={body} stroke={bodyDark} strokeWidth="0.8"
+      />
+      <path d="M -0.9,-13.5 C -1.5,-8 -1.7,-1 -1.4,7.5" stroke={stripe} strokeWidth="0.6" opacity="0.6" fill="none" />
+
+      {/* Cockpit canopy */}
+      <path d="M -1.8,-8.8 Q 0,-11.3 1.8,-8.8 L 1.4,-4.2 Q 0,-3.2 -1.4,-4.2 Z" fill="#1e1e2e" stroke="#0f0f1a" strokeWidth="0.4" />
+      <ellipse cx="-0.4" cy="-7.8" rx="0.55" ry="1.1" fill={scorched ? '#6b7280' : '#8ec9ff'} opacity="0.75" />
+
+      {/* Upper wing (in front, trimmed) */}
+      <path d="M -12,-2.6 L -2,-5.2 L 12,-2.6 L 2,0.6 Z" fill={wing} stroke={trim} strokeWidth="0.7" />
+      <line x1="-10" y1="-2.8" x2="10" y2="-2.8" stroke={trim} strokeWidth="0.5" opacity="0.75" />
+
+      {/* Nose cone + propeller hub */}
+      <circle cx="0" cy="-17.5" r="1" fill="#3b2a1a" />
+
+      {/* Landing gear */}
+      <line x1="-2.1" y1="7.5" x2="-3.6" y2="11.8" stroke="#4b5563" strokeWidth="0.6" />
+      <circle cx="-3.6" cy="12.3" r="1" fill="#1f2937" />
+      <line x1="2.1" y1="7.5" x2="3.6" y2="11.8" stroke="#4b5563" strokeWidth="0.6" />
+      <circle cx="3.6" cy="12.3" r="1" fill="#1f2937" />
+    </>
+  )
+}
 
 function MultiplierGraph({
   progress, crashed, crashMultiplier, liveMultiplier,
@@ -204,12 +237,12 @@ function MultiplierGraph({
         </g>
       )}
 
-      {/* Neon smoke trail — gradient from red (origin) to orange (plane) */}
+      {/* Engine smoke trail — soft grey/white puffs, not a rocket flame */}
       {trailPoints.map((p, i) => {
         const frac = (i + 1) / trailPoints.length
         return (
-          <circle key={i} cx={p.x} cy={p.y} r={frac * 5.5} fill={trailColor} opacity={frac * 0.6}>
-            <animate attributeName="r" values={`${frac * 4.5};${frac * 6};${frac * 4.5}`}
+          <circle key={i} cx={p.x} cy={p.y} r={frac * 4.5} fill={crashed ? '#4b5563' : '#e5e7eb'} opacity={frac * 0.35}>
+            <animate attributeName="r" values={`${frac * 3.5};${frac * 5};${frac * 3.5}`}
               dur="0.6s" repeatCount="indefinite" />
           </circle>
         )
@@ -221,85 +254,77 @@ function MultiplierGraph({
           {/* Glow aura */}
           <circle cx="0" cy="0" r="18" fill={glowColor} opacity="0.12" />
 
-          {/* Plane silhouette — classic Aviator style, nose up-right ~40° */}
-          <g transform={`rotate(${angle.toFixed(1)}) scale(1.1)`}>
+          {/* Plane silhouette — classic Aviator biplane, nose up along heading */}
+          <g transform={`rotate(${angle.toFixed(1)}) scale(1.05)`}>
             {/* Subtle wobble */}
             <animateTransform attributeName="transform" type="rotate"
               values={`${angle - 1};${angle + 1};${angle - 1}`}
               dur="1.2s" repeatCount="indefinite" additive="replace" />
-            {/* Red glow behind body */}
-            <ellipse cx="0" cy="0" rx="10" ry="6" fill="#ef4444" opacity="0.15" />
 
-            {/* Fuselage (body) — solid red */}
-            <path d="M -3,-12 L 0,-18 L 3,-12 L 4,0 L 3,6 L -3,6 L -4,0 Z"
-              fill="#ef4444" stroke="#991b1b" strokeWidth="0.8" />
+            <PlaneShape />
 
-            {/* Cockpit — dark glass */}
-            <ellipse cx="0" cy="-10" rx="2" ry="3" fill="#1e1e2e" stroke="#0f0f1a" strokeWidth="0.5" />
-            <ellipse cx="0" cy="-10" rx="1.2" ry="2" fill="#3b3b5c" opacity="0.6" />
-
-            {/* Upper wing — white/yellow trim */}
-            <path d="M -12,-4 L -2,-7 L 12,-4 L 2,-1 Z"
-              fill="#dc2626" stroke="#fbbf24" strokeWidth="0.6" />
-            {/* Wing highlight line */}
-            <line x1="-10" y1="-4" x2="10" y2="-4" stroke="#fde047" strokeWidth="0.5" opacity="0.7" />
-
-            {/* Lower wing */}
-            <path d="M -10,2 L -1,0 L 10,2 L 1,4 Z"
-              fill="#dc2626" stroke="#fbbf24" strokeWidth="0.5" />
-
-            {/* Tail fin — vertical */}
-            <path d="M -2,5 L -5,12 L 2,6 Z"
-              fill="#ef4444" stroke="#991b1b" strokeWidth="0.5" />
-            {/* Tail fin — horizontal */}
-            <path d="M -6,8 L -2,6 L -2,10 Z" fill="#b91c1c" stroke="#991b1b" strokeWidth="0.4" />
-
-            {/* Engine exhaust */}
-            <rect x="-1.5" y="5" width="3" height="2" rx="0.5" fill="#7f1d1d" />
-
-            {/* Flame */}
-            <ellipse cx="0" cy="9.5" rx="3" ry="5" fill="#fde047" opacity="0.95">
-              <animate attributeName="ry" values="4;7;3.5;6;4" dur="0.22s" repeatCount="indefinite" />
-              <animate attributeName="rx" values="3;2.2;3.5;2.5;3" dur="0.16s" repeatCount="indefinite" />
-            </ellipse>
-            <ellipse cx="0" cy="11" rx="2" ry="3.5" fill="#f97316" opacity="0.9">
-              <animate attributeName="ry" values="3;5;2.5;4.5;3" dur="0.18s" repeatCount="indefinite" />
-            </ellipse>
-            <ellipse cx="0" cy="12.5" rx="1" ry="2" fill="white" opacity="0.8">
-              <animate attributeName="ry" values="1.5;3;1;2.5;1.5" dur="0.15s" repeatCount="indefinite" />
-            </ellipse>
+            {/* Spinning propeller at the nose */}
+            <g transform="translate(0,-17.5)">
+              <g>
+                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="0.1s" repeatCount="indefinite" />
+                <ellipse cx="0" cy="0" rx="0.8" ry="5.5" fill="rgba(255,255,255,0.55)" />
+                <ellipse cx="0" cy="0" rx="5.5" ry="0.8" fill="rgba(255,255,255,0.35)" />
+              </g>
+            </g>
           </g>
         </g>
       ) : (
-        <g transform={`translate(${tip.x}, ${tip.y})`} filter="url(#gBoom)">
-          {/* Expanding rings */}
-          <circle cx="0" cy="0" r="20" fill="none" stroke="#ef4444" strokeWidth="2.5" opacity="0.7">
-            <animate attributeName="r" values="10;40;10" dur="0.7s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.7;0;0.7" dur="0.7s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="0" cy="0" r="12" fill="none" stroke="#facc15" strokeWidth="2" opacity="0.6">
-            <animate attributeName="r" values="6;28;6" dur="0.5s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.6;0;0.6" dur="0.5s" repeatCount="indefinite" />
-          </circle>
-          {/* Burst particles */}
-          <circle cx="0" cy="0" r="8" fill="#ef4444" opacity="0.9">
-            <animate attributeName="r" values="8;16;8" dur="0.35s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="0" cy="0" r="4" fill="#fde047" opacity="1">
-            <animate attributeName="r" values="4;8;4" dur="0.25s" repeatCount="indefinite" />
-          </circle>
-          {/* Debris sparks */}
-          {[0,40,80,120,160,200,240,280,320].map((deg, i) => {
-            const r = (deg * Math.PI) / 180
-            const dist = 14 + (i % 3) * 5
-            return (
-              <circle key={i} cx={Math.cos(r)*dist} cy={Math.sin(r)*dist} r="2"
-                fill={i % 2 === 0 ? '#fde047' : '#ef4444'} opacity="0.9">
-                <animate attributeName="opacity" values="0.9;0;0.9" dur={`${0.25+i*0.03}s`} repeatCount="indefinite" />
-                <animate attributeName="r" values="2;0.8;2" dur={`${0.25+i*0.03}s`} repeatCount="indefinite" />
-              </circle>
-            )
-          })}
+        <g transform={`translate(${tip.x}, ${tip.y})`}>
+          {/* Falling, tumbling wreck — the same plane, now spinning out of control */}
+          <g filter="url(#gRocketGlow)">
+            <animateTransform attributeName="transform" type="translate"
+              values="0,0; 3,22; -4,46; 2,72" dur="1.1s" repeatCount="indefinite" />
+            <g>
+              <animateTransform attributeName="transform" type="rotate"
+                values="0;180;360;540" dur="1.1s" repeatCount="indefinite" />
+              <PlaneShape scorched />
+              {/* trailing fire at the tail */}
+              <ellipse cx="0" cy="13" rx="2.4" ry="4" fill="#f97316" opacity="0.9">
+                <animate attributeName="ry" values="3;5.5;2.5;5;3" dur="0.18s" repeatCount="indefinite" />
+              </ellipse>
+              <ellipse cx="0" cy="14.5" rx="1.3" ry="2.5" fill="#fde047" opacity="0.9">
+                <animate attributeName="ry" values="2;3.5;1.5;3;2" dur="0.14s" repeatCount="indefinite" />
+              </ellipse>
+            </g>
+          </g>
+
+          {/* Dark smoke plume rising from impact point */}
+          {[0, 1, 2, 3, 4].map((i) => (
+            <circle key={i} cx={i * 1.5 - 3} cy={-i * 3} r={3 + i * 1.2}
+              fill="#374151" opacity={0.35 - i * 0.05}>
+              <animate attributeName="cy" values={`${-i * 3};${-i * 3 - 10};${-i * 3}`} dur={`${1.4 + i * 0.2}s`} repeatCount="indefinite" />
+            </circle>
+          ))}
+
+          {/* Impact flash */}
+          <g filter="url(#gBoom)">
+            <circle cx="0" cy="0" r="20" fill="none" stroke="#ef4444" strokeWidth="2.5" opacity="0.7">
+              <animate attributeName="r" values="10;40;10" dur="0.7s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.7;0;0.7" dur="0.7s" repeatCount="indefinite" />
+            </circle>
+            <circle cx="0" cy="0" r="12" fill="none" stroke="#facc15" strokeWidth="2" opacity="0.6">
+              <animate attributeName="r" values="6;28;6" dur="0.5s" repeatCount="indefinite" />
+              <animate attributeName="opacity" values="0.6;0;0.6" dur="0.5s" repeatCount="indefinite" />
+            </circle>
+            {/* Debris sparks */}
+            {[0,40,80,120,160,200,240,280,320].map((deg, i) => {
+              const r = (deg * Math.PI) / 180
+              const dist = 14 + (i % 3) * 5
+              return (
+                <circle key={i} cx={Math.cos(r)*dist} cy={Math.sin(r)*dist} r="2"
+                  fill={i % 2 === 0 ? '#fde047' : '#ef4444'} opacity="0.9">
+                  <animate attributeName="opacity" values="0.9;0;0.9" dur={`${0.25+i*0.03}s`} repeatCount="indefinite" />
+                  <animate attributeName="r" values="2;0.8;2" dur={`${0.25+i*0.03}s`} repeatCount="indefinite" />
+                </circle>
+              )
+            })}
+          </g>
+
           {/* CRASHED text */}
           <text x="0" y="-30" textAnchor="middle" fontSize="13" fill="#ef4444" fontWeight="900" letterSpacing="1">
             CRASHED
@@ -312,9 +337,10 @@ function MultiplierGraph({
 
 // ─── Bet Panel Component ────────────────────────────────────────────────────
 function BetPanel({
-  crashed, liveMultiplier, accessGranted, setNotification,
+  crashed, liveMultiplier, balance, setBalance, setNotification,
 }: {
-  crashed: boolean; liveMultiplier: number; accessGranted: boolean;
+  crashed: boolean; liveMultiplier: number; balance: number;
+  setBalance: (fn: (b: number) => number) => void
   setNotification: (n: { message: string; type: 'success' | 'error' | 'info' }) => void
 }) {
   const [betAmount, setBetAmount] = useState('100')
@@ -326,22 +352,29 @@ function BetPanel({
   const quickAmounts = [100, 200, 500, 1000, 2000, 5000]
 
   const handleBet = () => {
-    if (!accessGranted) {
-      setNotification({ message: 'Buy a package first to place bets', type: 'error' })
+    const amount = parseInt(betAmount) || 0
+    if (amount < 50) {
+      setNotification({ message: 'Minimum demo bet is 50 credits', type: 'error' })
       return
     }
+    if (amount > balance) {
+      setNotification({ message: 'Not enough demo credits — try a smaller bet', type: 'error' })
+      return
+    }
+    setBalance((b) => b - amount)
     setBetsPlaced(true)
     setCashedOut(false)
     setWonAmount(0)
-    setNotification({ message: `Bet of KSH ${betAmount} placed!`, type: 'success' })
+    setNotification({ message: `Demo bet of ${amount} credits placed!`, type: 'success' })
   }
 
   const handleCashout = () => {
     if (betsPlaced && !cashedOut) {
       const payout = (parseInt(betAmount) * liveMultiplier)
       setWonAmount(Math.floor(payout))
+      setBalance((b) => b + Math.floor(payout))
       setCashedOut(true)
-      setNotification({ message: `Cashed out! Won KSH ${Math.floor(payout).toLocaleString()} at ${liveMultiplier.toFixed(2)}x`, type: 'success' })
+      setNotification({ message: `Cashed out! Won ${Math.floor(payout).toLocaleString()} credits at ${liveMultiplier.toFixed(2)}x`, type: 'success' })
     }
   }
 
@@ -366,24 +399,9 @@ function BetPanel({
 
   return (
     <div className="relative bg-[#1a1f2e] rounded-xl border border-white/5 p-3 sm:p-4">
-      {/* Locked overlay */}
-      {!accessGranted && (
-        <div className="absolute inset-0 z-20 rounded-xl bg-[#0a0e17]/80 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#8b5cf6]/20 border border-[#8b5cf6]/30 flex items-center justify-center">
-            <svg className="w-6 h-6 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-          </div>
-          <p className="text-sm font-black text-white text-center">Signal Locked</p>
-          <p className="text-[10px] text-gray-400 font-bold text-center px-4">Buy a package to unlock betting</p>
-          <Link href="/packages"
-            className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white font-black text-xs shadow-lg shadow-[#8b5cf6]/30 hover:shadow-[#8b5cf6]/50 transition-all active:scale-95">
-            BUY SIGNAL
-          </Link>
-        </div>
-      )}
-
       <div className="flex items-center justify-between mb-2 sm:mb-3">
         <span className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-wider">Bet Amount</span>
-        <span className="text-[10px] sm:text-xs text-[#8b5cf6] font-bold">KSH {betAmount}</span>
+        <span className="text-[10px] sm:text-xs text-[#8b5cf6] font-bold">{betAmount} credits</span>
       </div>
 
       <div className="flex gap-1.5 sm:gap-2 mb-2 sm:mb-3">
@@ -429,11 +447,11 @@ function BetPanel({
       ) : !crashed && !cashedOut ? (
         <button onClick={handleCashout}
           className="w-full py-3 sm:py-3.5 rounded-xl bg-gradient-to-r from-[#f59e0b] to-[#f97316] text-black font-black text-xs sm:text-sm shadow-lg shadow-orange-500/20 hover:shadow-orange-500/40 transition-all active:scale-95 animate-pulse">
-          CASH OUT — {(parseInt(betAmount) * liveMultiplier).toFixed(0)} KSH
+          CASH OUT — {(parseInt(betAmount) * liveMultiplier).toFixed(0)} credits
         </button>
       ) : cashedOut ? (
         <div className="w-full py-3 sm:py-3.5 rounded-xl bg-[#22c55e]/20 border border-[#22c55e]/30 text-[#22c55e] font-black text-xs sm:text-sm text-center">
-          WON KSH {wonAmount.toLocaleString()}!
+          WON {wonAmount.toLocaleString()} CREDITS!
         </div>
       ) : (
         <button onClick={handleReset}
@@ -449,40 +467,19 @@ function BetPanel({
 export default function Dashboard() {
   const [liveGame, setLiveGame] = useState(1.01)
   const [graphProgress, setGraphProgress] = useState(0)
-  const [signals, setSignals] = useState<Array<{ multiplier: string; time: string; status: 'live' | 'crashed' }>>([])
   const [roundHistory, setRoundHistory] = useState<number[]>([])
   const [roundState, setRoundState] = useState({ crashed: false, crashMultiplier: 2.0, currentRoundIndex: 0 })
-  const [accessGranted, setAccessGranted] = useState(false)
-  const [accessExpiresAt, setAccessExpiresAt] = useState<string | null>(null)
-  const [accessLoading, setAccessLoading] = useState(true)
-  const [signalsRunning, setSignalsRunning] = useState(true)
   const [maxMultiplier, setMaxMultiplier] = useState(100)
-  const [balance] = useState(10000)
+  const [balance, setBalance] = useState(10000)
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const [liveBets, setLiveBets] = useState<Array<{ name: string; initials: string; bet: number; mul: number; payout: number; cashed: boolean }>>([])
   const [winPopups, setWinPopups] = useState<Array<{ id: number; name: string; bet: number; mul: number; payout: number }>>([])
-  const [signalStats] = useState({ total: 47, wins: 41, losses: 6 })
 
-  // Fetch settings
+  // Fetch demo game settings
   useEffect(() => {
     fetch('/api/settings').then((r) => r.json()).then((data) => {
-      setSignalsRunning(data.signals_running)
       setMaxMultiplier(data.max_multiplier || 100)
     }).catch(() => {})
-  }, [])
-
-  // Check access
-  useEffect(() => {
-    const storedPhone = localStorage.getItem('aviator_phone')
-    if (!storedPhone) { setAccessLoading(false); return }
-    fetch(`/api/verify-access?phone=${encodeURIComponent(storedPhone)}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.hasAccess) { setAccessGranted(true); setAccessExpiresAt(data.expires_at) }
-        else { setAccessGranted(false) }
-      })
-      .catch(() => setAccessGranted(false))
-      .finally(() => setAccessLoading(false))
   }, [])
 
   // Generate live bets
@@ -503,7 +500,7 @@ export default function Dashboard() {
     return () => clearInterval(interval)
   }, [])
 
-  // Floating win popups — shows people winning to build trust
+  // Floating win popups — simulated demo activity for atmosphere
   useEffect(() => {
     let popupId = 0
     const showWin = () => {
@@ -543,7 +540,6 @@ export default function Dashboard() {
 
       if (state.currentRoundIndex !== lastRoundIndex) {
         lastRoundIndex = state.currentRoundIndex
-        setSignals(generateSignals(10, state.currentRoundIndex, maxMultiplier))
         setRoundHistory(generateRoundHistory(15, state.currentRoundIndex - 1))
       }
 
@@ -584,8 +580,8 @@ export default function Dashboard() {
           {/* Left: Logo + Brand */}
           <div className="flex items-center gap-2 shrink-0">
             <Link href="/" className="flex items-center gap-2">
-              <img src="/betika-logo.jpg" alt="Betika" className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border border-[#8b5cf6]/50" />
-              <span className="hidden sm:inline text-sm font-black"><span className="text-[#8b5cf6]">Aviator</span> Signals</span>
+              <Logo size={30} />
+              <span className="hidden sm:inline text-sm font-black"><span className="text-[#8b5cf6]">Sky</span>Crash</span>
             </Link>
           </div>
           {/* Right: Balance, Sound, Settings, Players, Round */}
@@ -593,7 +589,7 @@ export default function Dashboard() {
             {/* Balance */}
             <div className="flex items-center gap-1.5 sm:gap-2 bg-white/5 rounded-lg px-2 sm:px-3 py-1.5 border border-white/10">
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span className="text-xs sm:text-sm font-bold text-white">KSH {balance.toLocaleString()}</span>
+              <span className="text-xs sm:text-sm font-bold text-white">{balance.toLocaleString()} credits</span>
             </div>
             {/* Sound */}
             <button className="hidden sm:flex w-8 h-8 rounded-lg bg-white/5 border border-white/10 items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors">
@@ -606,15 +602,11 @@ export default function Dashboard() {
             </div>
             {/* Round ID */}
             <div className="hidden md:block text-xs text-gray-500 font-mono bg-white/5 rounded-lg px-2.5 py-1.5 border border-white/10">#{currentRoundIndex}</div>
-            {/* VIP Badge */}
-            {!accessLoading && (
-              <div className={`flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg border text-[10px] sm:text-xs font-bold ${
-                accessGranted ? 'border-[#8b5cf6]/30 text-[#8b5cf6] bg-[#8b5cf6]/10' : 'border-red-500/30 text-red-400 bg-red-500/10'
-              }`}>
-                <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: accessGranted ? '#8b5cf6' : '#ef4444' }} />
-                {accessGranted ? 'VIP' : 'LOCKED'}
-              </div>
-            )}
+            {/* Demo Badge */}
+            <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-lg border border-[#8b5cf6]/30 text-[#8b5cf6] bg-[#8b5cf6]/10 text-[10px] sm:text-xs font-bold">
+              <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-[#8b5cf6]" />
+              DEMO
+            </div>
           </div>
         </div>
       </div>
@@ -630,26 +622,15 @@ export default function Dashboard() {
         </div>
       )}
 
-      {/* ── Buy Signal Banner (shown when not VIP) ── */}
-      {!accessLoading && !accessGranted && (
-        <div className="bg-gradient-to-r from-[#8b5cf6]/15 via-[#7c3aed]/10 to-[#8b5cf6]/15 border-b border-[#8b5cf6]/20">
-          <div className="max-w-[1400px] mx-auto px-3 sm:px-4 py-3 sm:py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <div className="flex items-center gap-3 text-center sm:text-left">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#8b5cf6]/20 border border-[#8b5cf6]/30 flex items-center justify-center shrink-0">
-                <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[#8b5cf6]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-              </div>
-              <div>
-                <p className="text-sm sm:text-base font-black text-white">Unlock Aviator Signals</p>
-                <p className="text-[10px] sm:text-xs text-gray-400 font-bold">Buy a signal package to start placing bets and win big!</p>
-              </div>
-            </div>
-            <Link href="/packages"
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-gradient-to-r from-[#8b5cf6] to-[#7c3aed] text-white font-black text-xs sm:text-sm shadow-lg shadow-[#8b5cf6]/30 hover:shadow-[#8b5cf6]/50 transition-all active:scale-95 text-center">
-              BUY SIGNAL NOW
-            </Link>
-          </div>
+      {/* ── Demo Notice Banner ── */}
+      <div className="bg-gradient-to-r from-[#8b5cf6]/15 via-[#7c3aed]/10 to-[#8b5cf6]/15 border-b border-[#8b5cf6]/20">
+        <div className="max-w-[1400px] mx-auto px-3 sm:px-4 py-2 sm:py-2.5 flex items-center justify-center gap-2 text-center">
+          <svg className="w-3.5 h-3.5 text-[#8b5cf6] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <p className="text-[10px] sm:text-xs text-gray-300 font-bold">
+            This is a free practice demo. Credits are virtual — there is no real money, no purchases, and no way to predict a crash point.
+          </p>
         </div>
-      )}
+      </div>
 
       <div className="max-w-[1400px] mx-auto px-2 sm:px-4 py-2 sm:py-3 pb-12 sm:pb-14">
 
@@ -669,18 +650,6 @@ export default function Dashboard() {
               ))}
             </div>
 
-            {/* Signal History — past signals with results */}
-            {signals.length > 0 && (
-              <div className="mb-1.5 sm:mb-2 flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-none pb-1">
-                <span className="text-[8px] sm:text-[9px] font-black text-[#8b5cf6] uppercase tracking-widest shrink-0">Signals:</span>
-                {signals.slice(0, 8).map((sig, i) => (
-                  <div key={i} className="flex items-center gap-1 px-1.5 sm:px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-black shrink-0 bg-[#22c55e]/10 text-[#22c55e] border border-[#22c55e]/20">
-                    <span>{sig.multiplier}</span>
-                    <span className="text-[#22c55e]">won</span>
-                  </div>
-                ))}
-              </div>
-            )}
 
             {/* Chart Card */}
             <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${
@@ -723,7 +692,7 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* ── Side Panel: Live Bets / Players (right) ── */}
+          {/* ── Side Panel: Simulated Demo Activity (right) ── */}
           <div className="w-full lg:w-80 xl:w-96 shrink-0 bg-[#0d1320] rounded-2xl border border-white/5 overflow-hidden flex flex-col max-h-[300px] sm:max-h-[400px] lg:max-h-none">
             {/* Tabs */}
             <div className="flex border-b border-white/5">
@@ -744,6 +713,11 @@ export default function Dashboard() {
                   {tab.label}
                 </button>
               ))}
+            </div>
+
+            {/* Simulated data disclaimer */}
+            <div className="px-3 sm:px-4 py-1 bg-black/20 border-b border-white/5">
+              <p className="text-[8px] sm:text-[9px] text-gray-500 font-bold uppercase tracking-wider">Simulated activity — for demo atmosphere only</p>
             </div>
 
             {/* Column Headers */}
@@ -800,26 +774,29 @@ export default function Dashboard() {
             3. BOTTOM PANEL — Bet Controls (full width, two side-by-side)
             ═══════════════════════════════════════════════════════════════════════ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-          <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
-          <BetPanel crashed={crashed} liveMultiplier={clampedLive} accessGranted={accessGranted} setNotification={setNotification} />
+          <BetPanel crashed={crashed} liveMultiplier={clampedLive} balance={balance} setBalance={setBalance} setNotification={setNotification} />
+          <BetPanel crashed={crashed} liveMultiplier={clampedLive} balance={balance} setBalance={setBalance} setNotification={setNotification} />
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          FLOATING WIN POPUPS — bottom-left, shows people winning
+          FLOATING WIN POPUPS — bottom-left, simulated demo activity
           ═══════════════════════════════════════════════════════════════════════ */}
       <div className="fixed bottom-4 left-4 z-40 flex flex-col gap-2 pointer-events-none">
         {winPopups.map((popup) => (
           <div key={popup.id} className="animate-slide-in bg-[#0d1320]/95 backdrop-blur-md border border-[#22c55e]/30 rounded-xl px-4 py-3 shadow-2xl shadow-black/40 max-w-[260px]">
-            <div className="flex items-center gap-2 mb-1">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#22c55e] to-green-700 flex items-center justify-center text-[8px] font-black text-white">
-                {popup.name.split(' ').map((w: string) => w[0]).join('')}
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#22c55e] to-green-700 flex items-center justify-center text-[8px] font-black text-white">
+                  {popup.name.split(' ').map((w: string) => w[0]).join('')}
+                </div>
+                <span className="text-[10px] font-bold text-white truncate">{popup.name}</span>
               </div>
-              <span className="text-[10px] font-bold text-white truncate">{popup.name}</span>
+              <span className="text-[7px] font-black text-gray-500 border border-gray-600/40 rounded px-1 py-0.5 uppercase tracking-wider">Sim</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[10px] text-gray-400 font-bold">Bet KSH {popup.bet.toLocaleString()}</span>
-              <span className="text-xs font-black text-[#22c55e]">+KSH {popup.payout.toLocaleString()}</span>
+              <span className="text-[10px] text-gray-400 font-bold">Bet {popup.bet.toLocaleString()} credits</span>
+              <span className="text-xs font-black text-[#22c55e]">+{popup.payout.toLocaleString()}</span>
             </div>
             <div className="text-[9px] text-[#f97316] font-bold mt-0.5">Cashed out at {popup.mul}x</div>
           </div>
@@ -827,23 +804,18 @@ export default function Dashboard() {
       </div>
 
       {/* ═══════════════════════════════════════════════════════════════════════
-          BOTTOM BAR — Signal Accuracy + Live Player Count
+          BOTTOM BAR — Player Count + Demo Disclaimer
           ═══════════════════════════════════════════════════════════════════════ */}
       <div className="fixed bottom-0 left-0 right-0 z-30 bg-[#0d1117]/95 backdrop-blur-md border-t border-white/5">
         <div className="max-w-[1400px] mx-auto px-3 sm:px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-3 sm:gap-5">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-[#22c55e] animate-pulse" />
-              <span className="text-[10px] sm:text-xs text-gray-400 font-bold">{liveBets.length} online</span>
-            </div>
-            <div className="hidden sm:flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 text-[#22c55e]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span className="text-[10px] sm:text-xs font-bold text-[#22c55e]">{signalStats.wins}/{signalStats.total} wins today</span>
+              <span className="text-[10px] sm:text-xs text-gray-400 font-bold">{liveBets.length} practicing now (simulated)</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-[9px] sm:text-[10px] text-gray-500 font-bold">Signal accuracy:</span>
-            <span className="text-[10px] sm:text-xs font-black text-[#22c55e]">{Math.round((signalStats.wins / signalStats.total) * 100)}%</span>
+            <span className="text-[9px] sm:text-[10px] text-gray-500 font-bold">Free demo · virtual credits only · no real money</span>
           </div>
         </div>
       </div>
