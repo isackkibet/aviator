@@ -11,6 +11,19 @@ const PACKAGES: Record<string, number> = {
   vip: 2000,
 }
 
+// ─── Kenyan phone normalization ──────────────────────────────────────────────
+// Paystack M-Pesa requires the international format with a leading +:
+//   0712345678  ->  +254712345678
+//   254712345678 -> +254712345678
+//   712345678   ->  +254712345678
+function normalizeKenyanPhone(phone: string): string {
+  const cleaned = phone.replace(/[^0-9]/g, '')
+  if (/^0[17]\d{8}$/.test(cleaned)) return `+254${cleaned.slice(1)}`
+  if (/^[17]\d{8}$/.test(cleaned)) return `+254${cleaned}`
+  if (/^254[17]\d{8}$/.test(cleaned)) return `+${cleaned}`
+  return phone
+}
+
 // ─── Input schema ─────────────────────────────────────────────────────────────
 const CreatePaymentSchema = z.object({
   // Accept both field name variants the frontend sends
@@ -77,6 +90,7 @@ export async function POST(req: Request) {
 
     const amountInKobo = Math.round(amount * 100)
     const baseUrl = req.headers.get('origin') || 'http://localhost:3000'
+    const normalizedPhone = normalizeKenyanPhone(phone)
 
     const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
@@ -91,8 +105,10 @@ export async function POST(req: Request) {
         reference,
         callback_url: `${baseUrl}/payment/success?transaction=${reference}&package=${packageId}&amount=${amount}&phone=${encodeURIComponent(phone)}`,
         metadata: { phone, package_id: packageId },
+        channels: ['mobile_money'],
         mobile_money: {
-          phone: phone.startsWith('0') ? `254${phone.slice(1)}` : phone,
+          provider: 'mpesa',
+          phone: normalizedPhone,
         },
       }),
     })
