@@ -62,55 +62,35 @@ function generateRoundHistory(count: number, seed: number) {
 // ─── SVG Graph ──────────────────────────────────────────────────────────────
 interface GraphPoint { x: number; y: number }
 
-// Detailed biplane silhouette, nose pointing up (-y), drawn in local coords.
-// Shared by the live-flight and crash-sequence renders so the same plane
-// that flies is the same plane that goes down.
+// Sleek single-wing jet silhouette, nose pointing up (-y), drawn in local coords.
+// One bold dart shape (not a fussy biplane) so it stays readable at small
+// sizes and at any rotation angle. Shared by the live-flight and
+// crash-sequence renders so the same plane that flies is the same plane
+// that goes down.
 function PlaneShape({ scorched = false }: { scorched?: boolean }) {
   const body = scorched ? '#7f1d1d' : '#ef4444'
   const bodyDark = scorched ? '#450a0a' : '#7f1d1d'
-  const wing = scorched ? '#5c1a17' : '#dc2626'
-  const trim = scorched ? '#9ca3af' : '#fbbf24'
-  const stripe = scorched ? '#7f1d1d' : '#fca5a5'
+  const highlight = scorched ? '#9a3412' : '#fca5a5'
+  const canopy = scorched ? '#4b5563' : '#8ec9ff'
 
   return (
     <>
       {/* Ground/contact shadow */}
-      <ellipse cx="0" cy="3" rx="11" ry="3.2" fill="#000" opacity="0.22" />
+      <ellipse cx="0" cy="4" rx="9" ry="2.6" fill="#000" opacity="0.22" />
 
-      {/* Tail fins (behind fuselage) */}
-      <path d="M -1,8.5 L -7.5,15.5 L -1,11 Z" fill={bodyDark} stroke={bodyDark} strokeWidth="0.5" />
-      <path d="M 1,9 L 2.2,15 L 1.6,10 Z" fill={wing} stroke={bodyDark} strokeWidth="0.4" />
-
-      {/* Lower wing (behind fuselage) */}
-      <path d="M -13,4 L -2,1.4 L 13,4 L 2,6.6 Z" fill={wing} stroke={bodyDark} strokeWidth="0.6" />
-      <line x1="-11" y1="3.6" x2="11" y2="3.6" stroke={bodyDark} strokeWidth="0.3" opacity="0.4" />
-      {/* wing struts connecting lower/upper wing */}
-      <line x1="-6.5" y1="4" x2="-6" y2="-3.4" stroke={bodyDark} strokeWidth="0.5" opacity="0.7" />
-      <line x1="6.5" y1="4" x2="6" y2="-3.4" stroke={bodyDark} strokeWidth="0.5" opacity="0.7" />
-
-      {/* Fuselage — tapered teardrop from nose to tail */}
+      {/* Single dart-shaped body + swept wings, tail notch cut in at the back */}
       <path
-        d="M 0,-17.5 C 2.6,-15.2 3.5,-9.5 3.1,-2.5 C 2.9,3.5 2.3,8.5 1.5,11 L -1.5,11 C -2.3,8.5 -2.9,3.5 -3.1,-2.5 C -3.5,-9.5 -2.6,-15.2 0,-17.5 Z"
-        fill={body} stroke={bodyDark} strokeWidth="0.8"
+        d="M 0,-19 C 1.6,-16.5 2.2,-12 2.4,-7 L 15,10 L 2,6 L 0,15 L -2,6 L -15,10 L -2.4,-7 C -2.2,-12 -1.6,-16.5 0,-19 Z"
+        fill={body} stroke={bodyDark} strokeWidth="1"
+        strokeLinejoin="round"
       />
-      <path d="M -0.9,-13.5 C -1.5,-8 -1.7,-1 -1.4,7.5" stroke={stripe} strokeWidth="0.6" opacity="0.6" fill="none" />
+
+      {/* Centerline highlight for a rounded, 3D feel */}
+      <path d="M 0,-15.5 L 0,11" stroke={highlight} strokeWidth="0.8" opacity="0.55" strokeLinecap="round" />
 
       {/* Cockpit canopy */}
-      <path d="M -1.8,-8.8 Q 0,-11.3 1.8,-8.8 L 1.4,-4.2 Q 0,-3.2 -1.4,-4.2 Z" fill="#1e1e2e" stroke="#0f0f1a" strokeWidth="0.4" />
-      <ellipse cx="-0.4" cy="-7.8" rx="0.55" ry="1.1" fill={scorched ? '#6b7280' : '#8ec9ff'} opacity="0.75" />
-
-      {/* Upper wing (in front, trimmed) */}
-      <path d="M -12,-2.6 L -2,-5.2 L 12,-2.6 L 2,0.6 Z" fill={wing} stroke={trim} strokeWidth="0.7" />
-      <line x1="-10" y1="-2.8" x2="10" y2="-2.8" stroke={trim} strokeWidth="0.5" opacity="0.75" />
-
-      {/* Nose cone + propeller hub */}
-      <circle cx="0" cy="-17.5" r="1" fill="#3b2a1a" />
-
-      {/* Landing gear */}
-      <line x1="-2.1" y1="7.5" x2="-3.6" y2="11.8" stroke="#4b5563" strokeWidth="0.6" />
-      <circle cx="-3.6" cy="12.3" r="1" fill="#1f2937" />
-      <line x1="2.1" y1="7.5" x2="3.6" y2="11.8" stroke="#4b5563" strokeWidth="0.6" />
-      <circle cx="3.6" cy="12.3" r="1" fill="#1f2937" />
+      <ellipse cx="0" cy="-9" rx="1.6" ry="3" fill="#1e1e2e" stroke="#0f0f1a" strokeWidth="0.4" />
+      <ellipse cx="-0.4" cy="-9.6" rx="0.7" ry="1.4" fill={canopy} opacity="0.8" />
     </>
   )
 }
@@ -254,8 +234,8 @@ function MultiplierGraph({
           {/* Glow aura */}
           <circle cx="0" cy="0" r="18" fill={glowColor} opacity="0.12" />
 
-          {/* Plane silhouette — classic Aviator biplane, nose up along heading */}
-          <g transform={`rotate(${angle.toFixed(1)}) scale(1.05)`}>
+          {/* Plane silhouette — sleek single-wing jet, nose up along heading */}
+          <g transform={`rotate(${angle.toFixed(1)}) scale(1.3)`}>
             {/* Subtle wobble */}
             <animateTransform attributeName="transform" type="rotate"
               values={`${angle - 1};${angle + 1};${angle - 1}`}
@@ -263,14 +243,13 @@ function MultiplierGraph({
 
             <PlaneShape />
 
-            {/* Spinning propeller at the nose */}
-            <g transform="translate(0,-17.5)">
-              <g>
-                <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="0.1s" repeatCount="indefinite" />
-                <ellipse cx="0" cy="0" rx="0.8" ry="5.5" fill="rgba(255,255,255,0.55)" />
-                <ellipse cx="0" cy="0" rx="5.5" ry="0.8" fill="rgba(255,255,255,0.35)" />
-              </g>
-            </g>
+            {/* Glowing engine exhaust at the tail */}
+            <ellipse cx="0" cy="16" rx="1.6" ry="3" fill="#fde047" opacity="0.85">
+              <animate attributeName="ry" values="2.4;3.6;2;3.2;2.4" dur="0.2s" repeatCount="indefinite" />
+            </ellipse>
+            <ellipse cx="0" cy="17.5" rx="1" ry="1.8" fill="#f97316" opacity="0.85">
+              <animate attributeName="ry" values="1.4;2.4;1.2;2;1.4" dur="0.16s" repeatCount="indefinite" />
+            </ellipse>
           </g>
         </g>
       ) : (
@@ -279,17 +258,19 @@ function MultiplierGraph({
           <g filter="url(#gRocketGlow)">
             <animateTransform attributeName="transform" type="translate"
               values="0,0; 3,22; -4,46; 2,72" dur="1.1s" repeatCount="indefinite" />
-            <g>
-              <animateTransform attributeName="transform" type="rotate"
-                values="0;180;360;540" dur="1.1s" repeatCount="indefinite" />
-              <PlaneShape scorched />
-              {/* trailing fire at the tail */}
-              <ellipse cx="0" cy="13" rx="2.4" ry="4" fill="#f97316" opacity="0.9">
-                <animate attributeName="ry" values="3;5.5;2.5;5;3" dur="0.18s" repeatCount="indefinite" />
-              </ellipse>
-              <ellipse cx="0" cy="14.5" rx="1.3" ry="2.5" fill="#fde047" opacity="0.9">
-                <animate attributeName="ry" values="2;3.5;1.5;3;2" dur="0.14s" repeatCount="indefinite" />
-              </ellipse>
+            <g transform="scale(1.3)">
+              <g>
+                <animateTransform attributeName="transform" type="rotate"
+                  values="0;180;360;540" dur="1.1s" repeatCount="indefinite" />
+                <PlaneShape scorched />
+                {/* trailing fire at the tail */}
+                <ellipse cx="0" cy="16" rx="2.4" ry="4" fill="#f97316" opacity="0.9">
+                  <animate attributeName="ry" values="3;5.5;2.5;5;3" dur="0.18s" repeatCount="indefinite" />
+                </ellipse>
+                <ellipse cx="0" cy="17.5" rx="1.3" ry="2.5" fill="#fde047" opacity="0.9">
+                  <animate attributeName="ry" values="2;3.5;1.5;3;2" dur="0.14s" repeatCount="indefinite" />
+                </ellipse>
+              </g>
             </g>
           </g>
 
