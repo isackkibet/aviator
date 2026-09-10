@@ -138,8 +138,6 @@ function MultiplierGraph({
   const glowColor = liveMultiplier > 100 ? 'rgba(250,204,21,0.5)' : 'rgba(249,115,22,0.5)'
   const trailColor = crashed ? '#ef4444' : '#f97316'
 
-  const yTicks = [1, Math.round(crashMultiplier * 0.33), Math.round(crashMultiplier * 0.66), Math.round(crashMultiplier)]
-
   const trailPoints = crashed
     ? []
     : points.slice(Math.max(0, points.length - 18), points.length - 1).filter((_, i) => i % 2 === 0)
@@ -147,9 +145,14 @@ function MultiplierGraph({
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-full" style={{ overflow: 'visible' }}>
       <defs>
+        <radialGradient id="gBgGlow" cx="38%" cy="60%" r="75%">
+          <stop offset="0%" stopColor={crashed ? '#7f1d1d' : '#8b5cf6'} stopOpacity="0.38" />
+          <stop offset="55%" stopColor={crashed ? '#7f1d1d' : '#8b5cf6'} stopOpacity="0.12" />
+          <stop offset="100%" stopColor={crashed ? '#7f1d1d' : '#8b5cf6'} stopOpacity="0" />
+        </radialGradient>
         <linearGradient id="gAreaFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={color} stopOpacity="0.3" />
-          <stop offset="100%" stopColor={color} stopOpacity="0.01" />
+          <stop offset="0%" stopColor={color} stopOpacity="0.85" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.25" />
         </linearGradient>
         <linearGradient id="gTrailGrad" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#ef4444" stopOpacity="0" />
@@ -177,17 +180,8 @@ function MultiplierGraph({
         </clipPath>
       </defs>
 
-      {/* Grid */}
-      {[0.25, 0.5, 0.75, 1].map((f) => (
-        <line key={`h${f}`} x1={PAD.left} y1={PAD.top + gH * (1 - f)}
-          x2={PAD.left + gW} y2={PAD.top + gH * (1 - f)}
-          stroke="rgba(255,255,255,0.04)" strokeWidth="1" strokeDasharray="3 7" />
-      ))}
-      {[0.2, 0.4, 0.6, 0.8, 1].map((f) => (
-        <line key={`v${f}`} x1={PAD.left + gW * f} y1={PAD.top}
-          x2={PAD.left + gW * f} y2={PAD.top + gH}
-          stroke="rgba(255,255,255,0.03)" strokeWidth="1" strokeDasharray="3 7" />
-      ))}
+      {/* Radial glow behind the curve — purple climbing, red once crashed */}
+      <rect x="0" y="0" width={W} height={H} fill="url(#gBgGlow)" />
 
       {/* Area fill */}
       <path d={areaD} fill="url(#gAreaFill)" clipPath="url(#graphClip)" />
@@ -195,17 +189,6 @@ function MultiplierGraph({
       {/* Glowing curve */}
       <path d={pathD} fill="none" stroke={trailColor} strokeWidth="3.5"
         strokeLinecap="round" strokeLinejoin="round" filter="url(#gLineGlow)" />
-
-      {/* Axes */}
-      <line x1={PAD.left} y1={PAD.top - 4} x2={PAD.left} y2={PAD.top + gH} stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
-      <line x1={PAD.left} y1={PAD.top + gH} x2={PAD.left + gW + 4} y2={PAD.top + gH} stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
-
-      {/* Y-axis labels */}
-      {yTicks.map((v, i) => (
-        <text key={i} x={PAD.left - 10} y={PAD.top + gH - (i / (yTicks.length - 1)) * gH + 4}
-          textAnchor="end" fill="rgba(255,255,255,0.35)" fontSize="10"
-          fontFamily="monospace" fontWeight="700">{v}x</text>
-      ))}
 
       {/* Multiplier label above the plane */}
       {!crashed && (
@@ -633,7 +616,7 @@ export default function Dashboard() {
 
 
             {/* Chart Card */}
-            <div className={`rounded-2xl border bg-[#0d1320] overflow-hidden transition-all duration-500 ${
+            <div className={`rounded-2xl border bg-black overflow-hidden transition-all duration-500 ${
               crashed ? 'border-red-500/40' : isMega ? 'border-yellow-400/40' : 'border-[#8b5cf6]/20'
             }`}>
               {/* Graph header */}
